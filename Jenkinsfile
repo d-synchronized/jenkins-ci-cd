@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 node () { //node('worker_node')
-   def externalMethod = load("gitMethods.groovy")
+   def externalMethod = load("scripts/gitMethods.groovy")
    try {
       stage('Checkout Source Code') { 
       }
