@@ -2,8 +2,8 @@ pipeline {
     agent any
     environment {
         ENV_NAME = "${env.BRANCH_NAME}"
-        IMAGE = readMavenPom().getArtifactId()
-        VERSION = readMavenPom().getVersion()
+        //IMAGE = readMavenPom().getArtifactId()
+        //VERSION = readMavenPom().getVersion()
     }
 
     // ----------------
