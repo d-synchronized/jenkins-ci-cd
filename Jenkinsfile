@@ -1,31 +1,47 @@
-pipeline {
-    agent any
-    environment {
-        ENV_NAME = "${env.BRANCH_NAME}"
-        //IMAGE = readMavenPom().getArtifactId()
-        //VERSION = readMavenPom().getVersion()
-    }
+#!/usr/bin/env groovy
 
-    // ----------------
+node () { //node('worker_node')
+   
+   try {
+      stage('Checkout Source Code') { 
+      }
+      
+      
+      stage('Drop SNAPSHOT') {
+      }
+      
+      stage('Create TAG'){
+          
+      }
+      
+   
+     stage('Build & Deploy Artifact') {
+     }
+     
+     stage('Deploy Artifact') {
+     }
+     
+     stage('Increment Development Version'){
+       }
+     
+       currentBuild.result = 'SUCCESS'
+       error("Build failed because of this and that..")
+   } catch(Exception err) {
+      echo "Error occurred while running the job '${env.JOB_NAME}'"
+   } finally {
+       //deleteDir()
+       echo '***************************************************'
+       echo '***************************************************'
+       echo '****POST******BUILD*****ACTION*********START*******'
+       echo '****POST******BUILD*****ACTION*********END*********'
+       echo '***************************************************'
+       echo '***************************************************'
+   }
+   
+}
 
-    stages {
-        stage('Build Container') {
-            steps {
-                echo "Building Container..${ENV_NAME}"
-
-                script {
-                    if (ENVIRONMENT_NAME == 'development') {
-                        ENV_NAME = 'Development'
-                    } else if (ENVIRONMENT_NAME == 'release') {
-                        ENV_NAME = 'Production'
-                    }
-                }
-                echo 'Building Branch: ' + env.BRANCH_NAME
-                echo 'Build Number: ' + env.BUILD_NUMBER
-                echo 'Building Environment: ' + ENV_NAME
-
-                echo "Running your service with environemnt ${ENV_NAME} now"
-            }
-        }
-    }
+def deleteTag(String tagVersionCreated) { 
+}
+   
+def revertParentPOM(String previousPomVersion) {
 }
