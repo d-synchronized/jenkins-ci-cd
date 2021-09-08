@@ -4,7 +4,7 @@ def checkoutSourceCode(String repositoryUrl, String credentials, String branch){
     checkout([$class: 'GitSCM', 
                     branches: [[name: "*/${branch}"]], 
                     extensions: [], 
-                    userRemoteConfigs: [[credentialsId: 'github-credentials', url: repositoryUrl]]])
+                    userRemoteConfigs: [[credentialsId: credentials, url: repositoryUrl]]])
 }
 
 
