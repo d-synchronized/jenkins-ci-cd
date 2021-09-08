@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Build Container') {
             steps {
-                echo "Building Container..${ENVIRONMENT_NAME}"
+                echo "Building Container..${ENV_NAME}"
 
                 script {
                     if (ENVIRONMENT_NAME == 'development') {
