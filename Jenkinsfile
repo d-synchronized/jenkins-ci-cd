@@ -13,7 +13,6 @@ node () { //node('worker_node')
       
       
       stage('Drop SNAPSHOT') {
-          def externalMethod = load("gitMethods.groovy")
           externalMethod.exampleMethod()
       }
       
