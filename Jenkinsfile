@@ -2,6 +2,8 @@ pipeline {
     agent any
     environment {
         ENV_NAME = "${env.BRANCH_NAME}"
+        IMAGE = readMavenPom().getArtifactId()
+        VERSION = readMavenPom().getVersion()
     }
 
     // ----------------
@@ -9,7 +11,7 @@ pipeline {
     stages {
         stage('Build Container') {
             steps {
-                echo 'Building Container..'
+                echo "Building Container..${ENVIRONMENT_NAME}"
 
                 script {
                     if (ENVIRONMENT_NAME == 'development') {
