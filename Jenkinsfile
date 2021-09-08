@@ -2,16 +2,13 @@
 pipeline {
    agent any
    
-   properties([
-      parameters([
-           gitParameter(branchFilter: 'origin/(.*)', defaultValue: 'development', name: 'BRANCH', type: 'PT_BRANCH'),
-           choice(choices: ['DEV', 'QA' , 'PROD'], name: 'ENVIRONMENT'),
-           string(defaultValue: 'http://localhost:8082/', name: 'SERVER', trim: true),
-           string(defaultValue: '', name: 'VERSION', trim: true, description: 'If VERSION is specified, artifact will be downloaded from Repository'),
-           booleanParam(defaultValue: false,  name: 'DEPLOY_FROM_REPO', description: 'If DEPLOY_FROM_REPO is specified and version is not specified, most recent artifact will be downloaded from Repository')
-      ]),
-      disableConcurrentBuilds()
-   ])
+   parameters{
+        gitParameter(branchFilter: 'origin/(.*)', defaultValue: 'development', name: 'BRANCH', type: 'PT_BRANCH')
+        choice(choices: ['DEV', 'QA' , 'PROD'], name: 'ENVIRONMENT')
+        string(defaultValue: 'http://localhost:8082/', name: 'SERVER', trim: true)
+        string(defaultValue: '', name: 'VERSION', trim: true, description: 'If VERSION is specified, artifact will be downloaded from Repository')
+        booleanParam(defaultValue: false,  name: 'DEPLOY_FROM_REPO', description: 'If DEPLOY_FROM_REPO is specified and version is not specified, most recent artifact will be downloaded from Repository')
+   }
    
    stages{
       stage('Access Parameters') {
