@@ -1,8 +1,8 @@
 #!/usr/bin/env groovy
 
-def checkoutSourceCode(String repositoryUrl){
+def checkoutSourceCode(String repositoryUrl, String credentials, String branch){
     checkout([$class: 'GitSCM', 
-                    branches: [[name: "*/master"]], 
+                    branches: [[name: "*/${branch}"]], 
                     extensions: [], 
                     userRemoteConfigs: [[credentialsId: 'github-credentials', url: repositoryUrl]]])
 }
@@ -13,7 +13,7 @@ node () { //node('worker_node')
    def repoUrl = 'https://github.com/d-synchronized/jenkins-ci-cd.git'
    try {
       stage('Checkout Source Code') { 
-          checkoutSourceCode(repoUrl);
+          checkoutSourceCode(repoUrl , 'github-credentials', 'master');
           externalMethod = load("scripts/gitMethods.groovy")
       }
       
