@@ -26,10 +26,10 @@ node () { //node('worker_node')
    try {
       stage('Clone') { 
          echo "***Checking out source code from repo url ${repoUrl},branchName ${params.BRANCH}, deploy from repo ${params.DEPLOY_FROM_REPO}***"
-         //checkout([$class: 'GitSCM', 
-         //      branches: [[name: "*/${params.BRANCH}"]], 
-         //      extensions: [], 
-         //      userRemoteConfigs: [[credentialsId: 'github-credentials', url: "${repoUrl}"]]])
+         checkout([$class: 'GitSCM', 
+               branches: [[name: "*/${params.BRANCH}"]], 
+               extensions: [], 
+               userRemoteConfigs: [[credentialsId: 'github-credentials', url: "${repoUrl}"]]])
                
          def externalMethod = load("scripts/git-methods.groovy")
       }
