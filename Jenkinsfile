@@ -14,7 +14,7 @@ node () { //node('worker_node')
    def server
    def rtMaven = Artifactory.newMavenBuild()
    def buildInfo
-   def repoUrl = 'https://github.com/d-synchronized/spring-boot-ci-cd-demo.git'
+   def repoUrl = 'https://github.com/d-synchronized/jenkins-ci-cd.git'
    
    def artifactId
    def devPomVersion
@@ -32,6 +32,7 @@ node () { //node('worker_node')
                userRemoteConfigs: [[credentialsId: 'github-credentials', url: "${repoUrl}"]]])
                
          def externalMethod = load("scripts/git-methods.groovy")
+         externalMethod(${params.BRANCH}, 'github-credentials', 'https://github.com/d-synchronized/spring-boot-ci-cd-demo.git')
       }
       
       stage ('Artifactory Configuration') {
