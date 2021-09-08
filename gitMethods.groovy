@@ -8,5 +8,3 @@ def otherExampleMethod() {
     echo 'otherExampleMethod'
 }
 return this
-
-return this;

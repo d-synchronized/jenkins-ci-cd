@@ -13,8 +13,8 @@ node () { //node('worker_node')
       
       
       stage('Drop SNAPSHOT') {
-          def externalMethod = load("gitMethods.groovy")
-          externalMethod()
+          def externalMethod = evaluate readFile("gitMethods.groovy")
+          externalMethod.exampleMethod()
       }
       
       stage('Create TAG'){
@@ -45,10 +45,4 @@ node () { //node('worker_node')
        echo '***************************************************'
    }
    
-}
-
-def deleteTag(String tagVersionCreated) { 
-}
-   
-def revertParentPOM(String previousPomVersion) {
 }
