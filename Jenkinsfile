@@ -1,53 +1,32 @@
-#!/usr/bin/env groovy
-
-def checkoutSourceCode(String repositoryUrl, String credentials, String branch){
-    checkout([$class: 'GitSCM', 
-                    branches: [[name: "*/${branch}"]], 
-                    extensions: [], 
-                    userRemoteConfigs: [[credentialsId: credentials, url: repositoryUrl]]])
-}
-
-
-node () { //node('worker_node')
-   def externalMethod
-   def repoUrl = 'https://github.com/d-synchronized/jenkins-ci-cd.git'
-   try {
-      stage('Checkout Source Code') { 
-          checkoutSourceCode(repoUrl , 'github-credentials', 'master');
-          externalMethod = load("scripts/gitMethods.groovy")
-      }
-      
-      
-      stage('Drop SNAPSHOT') {
-          externalMethod.exampleMethod()
-      }
-      
-      stage('Create TAG'){
-          
-      }
-      
+//DSL Pipeline / Declarative Pipeline
+pipeline {
+   agent any
    
-     stage('Build & Deploy Artifact') {
-     }
-     
-     stage('Deploy Artifact') {
-     }
-     
-     stage('Increment Development Version'){
-       }
-     
-       currentBuild.result = 'SUCCESS'
-       error("Build failed because of this and that..")
-   } catch(Exception err) {
-      echo "Error occurred while running the job '${env.JOB_NAME}'"
-   } finally {
-       //deleteDir()
-       echo '***************************************************'
-       echo '***************************************************'
-       echo '****POST******BUILD*****ACTION*********START*******'
-       echo '****POST******BUILD*****ACTION*********END*********'
-       echo '***************************************************'
-       echo '***************************************************'
+   parameters {
+       booleanParam(defaultValue: true, description: 'Is Release?', name: 'releaseType')
+       choice(choices: ['development', 'master'], description: 'Choose the branch', name: 'branchInput')
+       string(description: 'Reason for the Build', name: 'buildReason', trim: true)
    }
    
+   stages{
+      stage('Access Parameters') {
+         steps {
+             echo "Release Type is ${params.releaseType}"
+             echo "Selected Branch is ${params.branchInput}"
+             echo "Build Reason is ${params.buildReason}"
+         }
+      }
+      stage('Source') { 
+         steps {
+            bat([script: 'echo ****cloning the code****'])
+            //git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
+         }
+      }
+      stage('Build') {
+         steps {
+             bat([script: 'echo ****build command goes here****']) 
+             //bat([script: 'mvn clean install']) 
+         }
+      }
+   }
 }
