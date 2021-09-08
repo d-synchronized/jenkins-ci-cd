@@ -23,6 +23,8 @@ node () { //node('worker_node')
    def targetFolder
    def pattern
    def failNoOp
+   
+   def externalMethod = load("scripts/gitMethods.groovy")
    try {
       stage('Clone') { 
          echo "***Checking out source code from repo url ${repoUrl},branchName ${params.BRANCH}, deploy from repo ${params.DEPLOY_FROM_REPO}***"
@@ -31,7 +33,6 @@ node () { //node('worker_node')
                extensions: [], 
                userRemoteConfigs: [[credentialsId: 'github-credentials', url: "${repoUrl}"]]])
                
-         def externalMethod = load("scripts/git-methods.groovy")
          externalMethod("*/${branchName}", 'github-credentials', 'https://github.com/d-synchronized/spring-boot-ci-cd-demo.git')
       }
       
