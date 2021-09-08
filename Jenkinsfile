@@ -9,11 +9,12 @@ def checkoutSourceCode(String repositoryUrl){
 
 
 node () { //node('worker_node')
-   def externalMethod = load("scripts/gitMethods.groovy")
+   def externalMethod
    def repoUrl = 'https://github.com/d-synchronized/jenkins-ci-cd.git'
    try {
       stage('Checkout Source Code') { 
           checkoutSourceCode(repoUrl);
+          externalMethod = load("scripts/gitMethods.groovy")
       }
       
       
