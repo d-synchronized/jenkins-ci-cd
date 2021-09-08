@@ -32,7 +32,7 @@ node () { //node('worker_node')
                userRemoteConfigs: [[credentialsId: 'github-credentials', url: "${repoUrl}"]]])
                
          def externalMethod = load("scripts/git-methods.groovy")
-         externalMethod("${params.BRANCH}", 'github-credentials', 'https://github.com/d-synchronized/spring-boot-ci-cd-demo.git')
+         externalMethod("*/${branchName}", 'github-credentials', 'https://github.com/d-synchronized/spring-boot-ci-cd-demo.git')
       }
       
       stage ('Artifactory Configuration') {
