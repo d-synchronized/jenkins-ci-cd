@@ -6,7 +6,7 @@ pipeline {
    */
   agent {
     node {
-      label 'docker'
+      label 'worker_node'
     }
   }
 
