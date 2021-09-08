@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 node () { //node('worker_node')
-   
+   def externalMethod = load("gitMethods.groovy")
    try {
       stage('Checkout Source Code') { 
           def repoUrl = 'https://github.com/d-synchronized/jenkins-ci-cd.git'
