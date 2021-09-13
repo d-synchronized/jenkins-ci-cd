@@ -5,8 +5,8 @@ node () {
        parameters([
          [
            $class: 'ChoiceParameter', 
-           choiceType: 'PT_CHECKBOX', 
-           description: 'Is this a release?', 
+           choiceType: 'PT_RADIO', 
+           //description: 'Is this a release?', 
            filterLength: 1, 
            filterable: false, 
            name: 'release', 
@@ -22,7 +22,7 @@ node () {
                   classpath: [], 
                   sandbox: false, 
                   script: 
-                    "return['true','false']"
+                    "return['true']"
               ]
            ]
          ],//Choice Parameters ends here
