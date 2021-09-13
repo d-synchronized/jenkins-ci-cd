@@ -22,7 +22,7 @@ node () {
                   classpath: [], 
                   sandbox: false, 
                   script: 
-                    "return['true']"
+                    "return['Yes']"
               ]
            ]
          ],//Choice Parameters ends here
@@ -46,7 +46,7 @@ node () {
                   classpath: [], 
                   sandbox: false, 
                   script: '''
-                              if (release.equals("true")){
+                              if (release.equals("Yes")){
                                  return["PROD"]
                               } else {
                                  return["DEV","QA"]
