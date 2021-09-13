@@ -26,7 +26,7 @@ node () {
                                     ]
                                 ],
                                 [$class: 'CascadeChoiceParameter', 
-                                    choiceType: 'PT_SINGLE_SELECT', 
+                                    choiceType: 'PT_MULTI_SELECT', 
                                     description: 'Select the AMI from the Dropdown List',
                                     name: 'AMI List', 
                                     referencedParameters: 'Env', 
