@@ -27,7 +27,7 @@ node () {
            ]
          ],//Choice Parameters ends here
          [
-           $class: 'ChoiceParameter', 
+           $class: 'CascadeChoiceParameter', 
            choiceType: 'PT_SINGLE_SELECT', 
            description: 'Select the Environemnt from the Dropdown List', 
            filterLength: 1, 
@@ -44,8 +44,13 @@ node () {
               script: [
                   classpath: [], 
                   sandbox: false, 
-                  script: 
-                    "return['DEV','QA','PROD']"
+                   '''
+                              if (release.equals("true")){
+                                 return["PROD"]
+                              } else {
+                                 return["DEV","QA"]
+                              }
+                  '''
               ]
            ]
         ],//Choice Parameters ends here
