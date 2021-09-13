@@ -5,7 +5,7 @@ node () {
        parameters([
          [
            $class: 'ChoiceParameter', 
-           choiceType: 'PT_RADIO', 
+           choiceType: 'PT_CHECKBOX', 
            //description: 'Is this a release?', 
            filterLength: 1, 
            filterable: false, 
