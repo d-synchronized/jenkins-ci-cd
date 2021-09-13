@@ -2,21 +2,60 @@
 pipeline {
    agent any
    
-   parameters{
-        gitParameter(branchFilter: 'origin/(.*)', defaultValue: 'development', name: 'BRANCH', type: 'PT_BRANCH')
-        choice(choices: ['DEV', 'QA' , 'PROD'], name: 'ENVIRONMENT')
-        string(defaultValue: 'http://localhost:8082/', name: 'SERVER', trim: true)
-        string(defaultValue: '', name: 'VERSION', trim: true, description: 'If VERSION is specified, artifact will be downloaded from Repository')
-        booleanParam(defaultValue: false,  name: 'DEPLOY_FROM_REPO', description: 'If DEPLOY_FROM_REPO is specified and version is not specified, most recent artifact will be downloaded from Repository')
-        activeChoiceParam('Service') {
-            description('Select service you wan to deploy')
-            choiceType('SINGLE_SELECT')
-            groovyScript {
-                script("return ['web-service', 'proxy-service', 'backend-service']")
-                fallbackScript('"fallback choice"')
-            }
-        }
-   }
+   parameters([
+                                gitParameter(branchFilter: 'origin/(.*)', defaultValue: 'development', name: 'BRANCH', type: 'PT_BRANCH'),
+                                [$class: 'ChoiceParameter', 
+                                    choiceType: 'PT_SINGLE_SELECT', 
+                                    description: 'Select the Environemnt from the Dropdown List', 
+                                    filterLength: 1, 
+                                    filterable: false, 
+                                    name: 'Env', 
+                                    script: [
+                                        $class: 'GroovyScript', 
+                                        fallbackScript: [
+                                            classpath: [], 
+                                            sandbox: false, 
+                                            script: 
+                                                "return['Could not get The environemnts']"
+                                        ], 
+                                        script: [
+                                            classpath: [], 
+                                            sandbox: false, 
+                                            script: 
+                                                "return['DEV','QA','PROD']"
+                                        ]
+                                    ]
+                                ],
+                                [$class: 'CascadeChoiceParameter', 
+                                    choiceType: 'PT_MULTI_SELECT', 
+                                    description: 'Select the Servers from the Dropdown List',
+                                    name: 'AMI List', 
+                                    referencedParameters: 'Env', 
+                                    script: 
+                                        [$class: 'GroovyScript', 
+                                        fallbackScript: [
+                                                classpath: [], 
+                                                sandbox: false, 
+                                                script: "return['Could not get Environment from Env Param']"
+                                                ], 
+                                        script: [
+                                                classpath: [], 
+                                                sandbox: false, 
+                                                script: '''
+                                                if (Env.equals("DEV")){
+                                                    return["ami-sd2345sd", "ami-asdf245sdf", "ami-asdf3245sd"]
+                                                }
+                                                else if(Env.equals("QA")){
+                                                    return["ami-sd34sdf", "ami-sdf345sdc", "ami-sdf34sdf"]
+                                                }
+                                                else if(Env.equals("PROD")){
+                                                    return["ami-sdf34sdf", "ami-sdf34ds", "ami-sdf3sf3"]
+                                                }
+                                                '''
+                                            ] 
+                                    ]
+                                ]
+    ])
    
    stages{
       stage('Access Parameters') {
