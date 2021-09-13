@@ -2,7 +2,9 @@
 pipeline {
    agent any
    
-   stage('Parameters'){
+   stages{
+      
+      stage('Parameters'){
                 steps {
                     script {
                     properties([
@@ -85,9 +87,8 @@ pipeline {
                         ])
                     }
                 }
-            }   
+            } 
    
-   stages{
       stage('Access Parameters') {
          steps {
              echo "Release Type is ${params.releaseType}"
