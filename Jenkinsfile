@@ -27,7 +27,7 @@ pipeline {
                                             classpath: [], 
                                             sandbox: false, 
                                             script: 
-                                                "return['dev','stage','prod']"
+                                                "return['DEV','QA','PROD']"
                                         ]
                                     ]
                                 ],
@@ -47,14 +47,14 @@ pipeline {
                                                 classpath: [], 
                                                 sandbox: false, 
                                                 script: '''
-                                                if (Env.equals("dev")){
-                                                    return["ami-sd2345sd", "ami-asdf245sdf", "ami-asdf3245sd"]
+                                                if (Env.equals("DEV")){
+                                                    return["dweblnl025", "dapplnl052"]
                                                 }
-                                                else if(Env.equals("stage")){
-                                                    return["ami-sd34sdf", "ami-sdf345sdc", "ami-sdf34sdf"]
+                                                else if(Env.equals("QA")){
+                                                    return[ "QWEBLNL001" , "QWEBLNL022", "QWEBLNL023"]
                                                 }
-                                                else if(Env.equals("prod")){
-                                                    return["ami-sdf34sdf", "ami-sdf34ds", "ami-sdf3sf3"]
+                                                else if(Env.equals("PROD")){
+                                                    return["PWEBLSL087", "PWEBLSL088", "PWEBLSL30a" ,  "PWEBLSL30b"]
                                                 }
                                                 '''
                                             ] 
