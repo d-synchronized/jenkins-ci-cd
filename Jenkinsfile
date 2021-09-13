@@ -33,6 +33,7 @@ node () {
            filterLength: 1, 
            filterable: false, 
            name: 'Env', 
+           referencedParameters: 'release', 
            script: [
               $class: 'GroovyScript', 
               fallbackScript: [
@@ -44,13 +45,13 @@ node () {
               script: [
                   classpath: [], 
                   sandbox: false, 
-                   '''
+                  script: '''
                               if (release.equals("true")){
                                  return["PROD"]
                               } else {
                                  return["DEV","QA"]
                               }
-                  '''
+                           '''
               ]
            ]
         ],//Choice Parameters ends here
