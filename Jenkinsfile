@@ -5,11 +5,34 @@ node () {
        parameters([
          [
            $class: 'ChoiceParameter', 
+           choiceType: 'PT_RADIO', 
+           description: 'Is this a release?', 
+           filterLength: 1, 
+           filterable: false, 
+           name: 'release', 
+           script: [
+              $class: 'GroovyScript', 
+              fallbackScript: [
+                  classpath: [], 
+                  sandbox: false, 
+                  script: 
+                     "return['Could not get release']"
+              ], 
+              script: [
+                  classpath: [], 
+                  sandbox: false, 
+                  script: 
+                    "return['true','false']"
+              ]
+           ]
+         ],//Choice Parameters ends here
+         [
+           $class: 'CascadeChoiceParameter', 
            choiceType: 'PT_SINGLE_SELECT', 
            description: 'Select the Environemnt from the Dropdown List', 
            filterLength: 1, 
            filterable: false, 
-           name: 'Env', 
+           referencedParameters: 'release', 
            script: [
               $class: 'GroovyScript', 
               fallbackScript: [
@@ -21,8 +44,13 @@ node () {
               script: [
                   classpath: [], 
                   sandbox: false, 
-                  script: 
-                    "return['DEV','QA','PROD']"
+                  script: '''
+                              if (release.equals("true")){
+                                 return["PROD"]
+                              } else {
+                                 return["DEV","QA"]
+                              }
+                           '''
               ]
            ]
         ],//Choice Parameters ends here
