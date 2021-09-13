@@ -1,13 +1,7 @@
 //DSL Pipeline / Declarative Pipeline
-pipeline {
-   agent any
+node () { 
    
-   stages{
-      
-      stage('Parameters'){
-                steps {
-                    script {
-                    properties([
+    properties([
                             parameters([
                                 [$class: 'ChoiceParameter', 
                                     choiceType: 'PT_SINGLE_SELECT', 
@@ -62,28 +56,18 @@ pipeline {
                                 ]
                             ])
                         ])
-                    }
-                }
-            } 
    
-      stage('Access Parameters') {
-         steps {
+   stage('Access Parameters') {
              echo "Release Type is ${params.releaseType}"
              echo "Selected Branch is ${params.branchInput}"
              echo "Build Reason is ${params.buildReason}"
-         }
       }
       stage('Source') { 
-         steps {
             bat([script: 'echo ****cloning the code****'])
-            //git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
-         }
+            git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
       }
       stage('Build') {
-         steps {
              bat([script: 'echo ****build command goes here****']) 
-             //bat([script: 'mvn clean install']) 
-         }
+             bat([script: 'mvn clean install']) 
       }
-   }
 }
