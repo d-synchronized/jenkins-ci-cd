@@ -45,7 +45,11 @@ node () {
                   classpath: [], 
                   sandbox: false, 
                   script:    
-                          "return load('scripts/CommonUtils.groovy').fetchAvailableBranches()" 
+                         '''
+                           def cu = load('scripts/CommonUtils.groovy')
+                           def branches = cu.fetchAvailableBranches()
+                           return branches
+                         '''
                          
                   
               ]
