@@ -44,9 +44,9 @@ node () {
               script: [
                   classpath: [], 
                   sandbox: false, 
-                  script: [   
-                          return load('scripts/CommonUtils.groovy').fetchAvailableBranches() 
-                         ]
+                  script:    
+                          "return load('scripts/CommonUtils.groovy').fetchAvailableBranches()" 
+                         
                   
               ]
            ]
