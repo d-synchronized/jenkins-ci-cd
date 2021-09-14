@@ -123,7 +123,7 @@ node () {
                userRemoteConfigs: [[credentialsId: 'github-credentials', url: "${repoUrl}"]]])
    
    
-        def cu = evaluate('scripts/CommonUtils.groovy')
+        def cu = load('scripts/CommonUtils.groovy')
         def branches = cu.fetchAvailableBranches()   
         echo "${branches}"
       }
