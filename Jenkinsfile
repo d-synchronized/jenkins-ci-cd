@@ -1,6 +1,6 @@
 //DSL Pipeline / Declarative Pipeline
 node () { 
-   
+   def repoUrl = 'https://github.com/d-synchronized/jenkins-ci-cd.git'
     properties([
        parameters([
          [
@@ -46,7 +46,14 @@ node () {
                   sandbox: false, 
                   script:    
                          '''
-                           return ['development', 'master']
+                           proc1 = ['/bin/bash', '-c', 
+  "/usr/bin/git ls-remote --heads ${repoUrl}"].execute()
+proc2 = ['/bin/bash', '-c', 
+  "/usr/bin/awk ' { gsub(/refs\\/heads\\//, \"\"); print \$2 }' "].execute()
+all = proc1 | proc2
+
+choices = all.text
+return choices.split().toList();
                          '''
                          
                   
@@ -116,7 +123,6 @@ node () {
    ])//properties ends here
    
    stage ('Artifactory Configuration') {
-        def repoUrl = 'https://github.com/d-synchronized/jenkins-ci-cd.git'
         checkout([$class: 'GitSCM', 
                branches: [[name: "*/${params.BRANCH}"]], 
                extensions: [], 
