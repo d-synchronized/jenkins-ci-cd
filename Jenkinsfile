@@ -116,6 +116,13 @@ node () {
    ])//properties ends here
    
    stage ('Artifactory Configuration') {
+        def repoUrl = 'https://github.com/d-synchronized/jenkins-ci-cd.git'
+        checkout([$class: 'GitSCM', 
+               branches: [[name: "*/${params.BRANCH}"]], 
+               extensions: [], 
+               userRemoteConfigs: [[credentialsId: 'github-credentials', url: "${repoUrl}"]]])
+   
+   
         def cu = load('scripts/CommonUtils.groovy')
         def branches = cu.fetchAvailableBranches()   
         echo "${branches}"
