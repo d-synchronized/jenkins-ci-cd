@@ -46,9 +46,7 @@ node () {
                   sandbox: false, 
                   script:    
                          '''
-                           def cu = load('scripts/CommonUtils.groovy')
-                           def branches = cu.fetchAvailableBranches()
-                           return branches
+                           return ['development', 'master']
                          '''
                          
                   
