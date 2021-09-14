@@ -27,6 +27,33 @@ node () {
            ]
          ],//Choice Parameters ends here
          [
+           $class: 'ChoiceParameter', 
+           choiceType: 'PT_SINGLE_SELECT', 
+           //description: 'Is this a release?', 
+           filterLength: 1, 
+           filterable: false, 
+           name: 'branch', 
+           script: [
+              $class: 'GroovyScript', 
+              fallbackScript: [
+                  classpath: [], 
+                  sandbox: false, 
+                  script: 
+                     "return['development']"
+              ], 
+              script: [
+                  classpath: [], 
+                  sandbox: false, 
+                  script: '''  
+                          evaluate("./scripts/CommonUtils.groovy")
+                          def cu = new CommonUtils()
+                          return cu.fetchAvailableBranches()                            
+                          '''
+                  
+              ]
+           ]
+         ],//Choice Parameters ends here
+         [
            $class: 'CascadeChoiceParameter', 
            choiceType: 'PT_SINGLE_SELECT', 
            description: 'Select the Environemnt from the Dropdown List', 
@@ -88,17 +115,4 @@ node () {
       ])//parameters ends here
    ])//properties ends here
    
-   stage('Access Parameters') {
-             echo "Release Type is ${params.SERVER_LIST}"
-             echo "Selected Branch is ${params.BRANCH}"
-             echo "Build Reason is ${params.buildReason}"
-      }
-      stage('Source') { 
-            bat([script: 'echo ****cloning the code****'])
-            //git ([branch: 'day-1', url: 'https://github.com/d-synchronized/ci-cd-demo.git'])
-      }
-      stage('Build') {
-             bat([script: 'echo ****build command goes here****']) 
-             //bat([script: 'mvn clean install']) 
-      }
 }
