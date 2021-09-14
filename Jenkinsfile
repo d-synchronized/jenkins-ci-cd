@@ -45,9 +45,9 @@ node () {
                   classpath: [], 
                   sandbox: false, 
                   script: '''  
-                          evaluate("./scripts/CommonUtils.groovy")
-                          def cu = new CommonUtils()
-                          return cu.fetchAvailableBranches()                            
+                          def cu = load('scripts/CommonUtils.groovy')
+                          def branches = cu.fetchAvailableBranches() 
+                          return branches                           
                           '''
                   
               ]
@@ -123,9 +123,7 @@ node () {
                userRemoteConfigs: [[credentialsId: 'github-credentials', url: "${repoUrl}"]]])
    
    
-        //def cu = load('scripts/CommonUtils.groovy')
-        evaluate('scripts/CommonUtils.groovy')
-        def cu = new CommonUtils()
+        def cu = load('scripts/CommonUtils.groovy')
         def branches = cu.fetchAvailableBranches()   
         echo "${branches}"
       }
