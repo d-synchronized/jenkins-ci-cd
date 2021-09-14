@@ -116,7 +116,7 @@ node () {
    ])//properties ends here
    
    stage ('Artifactory Configuration') {
-        def cu = evaluate("/scripts/CommonUtils.groovy")
+        def cu = evaluate("scripts/CommonUtils.groovy")
         def branches = cu.fetchAvailableBranches()   
         echo "${branches}"
       }
