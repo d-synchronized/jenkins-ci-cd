@@ -39,7 +39,7 @@ node () {
                   classpath: [], 
                   sandbox: false, 
                   script: 
-                     "return['development']"
+                     "return['Could not get the branches']"
               ], 
               script: [
                   classpath: [], 
