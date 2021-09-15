@@ -176,9 +176,10 @@ node () {
               def user = err.getCauses()[0].getUser()
               if('SYSTEM' == user.toString()) { // SYSTEM means timeout.
                 echo "**Artifact already exists!, No response received from the user for Re - Build"
-              } else {
                 userInput = false
+              } else {
                 echo "**Artifact already exists!, Re - Build request aborted by the user"
+                userInput = false
               }
             }
             
