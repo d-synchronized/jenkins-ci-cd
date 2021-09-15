@@ -23,6 +23,7 @@ def downloadArtifacts(String pattern, String target){
   try{
    buildInfo = server.download spec: downloadSpec, failNoOp: true
   }catch(err){
+    echo "${err}"
     buildInfo = null
   }
   return buildInfo                 
