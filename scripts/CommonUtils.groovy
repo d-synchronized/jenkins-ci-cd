@@ -4,7 +4,7 @@ def fetchAvailableBranches() {
     return ['development', 'master']
 }
 
-def downloadArtifacts(string pattern, string target){
+def downloadArtifacts(String pattern, String target){
   echo "Downloading artifact against pattern ${pattern}  ,Target folder ${target}"
   def downloadSpec = """{
                           "files": [
@@ -23,14 +23,14 @@ def downloadArtifacts(string pattern, string target){
 }
 
 
-def prepareTargetFolder(string artifactId, string version, boolean downloadSnapshot){
+def prepareTargetFolder(String artifactId, String version, boolean downloadSnapshot){
    version = !downloadSnapshot && version.contains("SNAPSHOT") ? version.replace("-SNAPSHOT" , "") : version
    def targetFolderInfix = downloadSnapshot ? "SNAPSHOTS" : "RELEASES"
    def targetFolder = "${artifactId}/%{targetFolderInfix}/${version}/"
    return targetFolder
 }
 
-def prepareSearchPattern(string artifactId, string version , boolean downloadSnapshot) {
+def prepareSearchPattern(String artifactId, String version , boolean downloadSnapshot) {
    version = !downloadSnapshot && version.contains("SNAPSHOT") ? version.replace("-SNAPSHOT" , "") : version
    def repositoryName = downloadSnapshot ? "cetera-maven-snapshots" : "cetera-maven-releases"
    def pattern = "${snapshotRepository}/com/example/${artifactId}/${version}/${artifactId}-*.war"
