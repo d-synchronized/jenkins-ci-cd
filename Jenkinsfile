@@ -94,71 +94,159 @@ node () {
    def commonUtils
    
    def buildInfo
-   
-   stage('Clone') { 
-     echo "***Checking out source code from repo url ${repoUrl},branchName ${params.BRANCH}, deploy from repo ${params.DEPLOY_FROM_REPO}***"
-     checkout([
-                $class: 'GitSCM', 
-                branches: [[name: "*/${params.BRANCH}"]], 
-                extensions: [], 
-                userRemoteConfigs: [[credentialsId: 'github-credentials', url: "${repoUrl}"]]
-             ])//checkout ends here
+   try {
+     stage('Clone') { 
+       echo "***Checking out source code from repo url ${repoUrl},branchName ${params.BRANCH}, deploy from repo ${params.DEPLOY_FROM_REPO}***"
+       checkout([
+                  $class: 'GitSCM', 
+                  branches: [[name: "*/${params.BRANCH}"]], 
+                  extensions: [], 
+                  userRemoteConfigs: [[credentialsId: 'github-credentials', url: "${repoUrl}"]]
+               ])//checkout ends here
              
              
-     pom = readMavenPom file: 'pom.xml'
-     commonUtils = load("scripts/CommonUtils.groovy")
-   }//clone stage ends here
+       pom = readMavenPom file: 'pom.xml'
+       commonUtils = load("scripts/CommonUtils.groovy")
+     }//clone stage ends here
       
-   stage ('Artifactory Configuration') {
-     // Obtain an Artifactory server instance, defined in Jenkins --> Manage Jenkins --> Configure System:
-     server = Artifactory.server 'DSYNC_JFROG_INSTANCE'
+     stage ('Artifactory Configuration') {
+       // Obtain an Artifactory server instance, defined in Jenkins --> Manage Jenkins --> Configure System:
+       server = Artifactory.server 'DSYNC_JFROG_INSTANCE'
 
-     // Tool name from Jenkins configuration
-     rtMaven.tool = 'MAVEN_BUILD_TOOL'
-     rtMaven.deployer releaseRepo: 'cetera-maven-releases', snapshotRepo: 'cetera-maven-snapshots', server: server
-     //rtMaven.resolver releaseRepo: 'cetera-maven-virtual-releases', snapshotRepo: 'cetera-maven-virtual-snapshots', server: server
-     buildInfo = Artifactory.newBuildInfo()
-   }
+       // Tool name from Jenkins configuration
+       rtMaven.tool = 'MAVEN_BUILD_TOOL'
+       rtMaven.deployer releaseRepo: 'cetera-maven-releases', snapshotRepo: 'cetera-maven-snapshots', server: server
+       //rtMaven.resolver releaseRepo: 'cetera-maven-virtual-releases', snapshotRepo: 'cetera-maven-virtual-snapshots', server: server
+       buildInfo = Artifactory.newBuildInfo()
+     }
    
-   stage('Build Artifact') {
-     IS_RELEASE = "${params.release}" == 'false' ? false : true
-     DEPLOY_TO_QA = "${params.Env}" == 'QA' ? true : false
-     DEPLOY_TO_DEV = "${params.Env}"  == 'DEV' ? true : false
-     DEPLOY_TO_PROD = "${params.Env}"  == 'PROD' ? true : false
-     VERSION_REQUESTED = "${params.version}"  != '' ? true : false
+     def uploadArtifact = false
+   
+     stage('Build Artifact') {
+       IS_RELEASE = "${params.release}" == 'true' ? true : false
+       DEPLOY_TO_QA = "${params.Env}" == 'QA' ? true : false
+       DEPLOY_TO_DEV = "${params.Env}"  == 'DEV' ? true : false
+       DEPLOY_TO_PROD = "${params.Env}"  == 'PROD' ? true : false
+       VERSION_REQUESTED = "${params.version}"  != '' ? true : false
      
-     /**
-     * Donot Build if
-     * 1. We are doing a release, in that case we will promote the artifact
-     * 2. We are deploying to QA and version is not requested
-     * 3. We are deploying to Prod and version is not requested
-     **/
-     if(IS_RELEASE || VERSION_REQUESTED || (DEPLOY_TO_QA && !VERSION_REQUESTED) || (DEPLOY_TO_PROD && !VERSION_REQUESTED)){
+       /**
+       * Donot Build if
+       * 1. We are doing a release, in that case we will promote the artifact
+       * 2. We are deploying to QA and version is not requested
+       * 3. We are deploying to Prod and version is not requested
+       **/
+       if(IS_RELEASE){
+          echo "*****************************************************************************"
+          echo "*****************************************************************************"
+          echo "**Build Artifact stage will be skipped, Reason IS_RELEASE set to ${release}**"
+          echo "*****************************************************************************"
+          echo "*****************************************************************************"
+          echo "*****************************************************************************"
+       }else if(VERSION_REQUESTED){
+          echo "*****************************************************************************"
+          echo "*****************************************************************************"
+          echo "**Build Artifact stage will be skipped, Reason VERSION_REQUESTED set to ${release}**"
+          echo "*****************************************************************************"
+          echo "*****************************************************************************"
+          echo "*****************************************************************************"
+       } else{
+          //def downloadSnapshot = DEPLOY_TO_DEV ? true : false
+          //It is assumed the same snapshot will be depoyed to both dev and QA, promotion will happen in prod
+          def downloadSnapshot = true
+          def artifactBuildInfo = commonUtils.downloadArtifacts( commonUtils.prepareTargetFolder("${pom.artifactId}" , "${pom.version}" , downloadSnapshot),
+                                                                 commonUtils.prepareSearchPattern("${pom.artifactId}" , "${pom.version}" , downloadSnapshot)
+                                                                );
+                                                           
+          if(artifactBuildInfo != null && DEPLOY_TO_DEV){
+            echo "**artifact ${pom.artifactId} against version ${pom.version} already available in the repository**"
+            def userInput = true
+            try{
+              timeout(time: 30, unit: 'SECONDS') {
+              def userInput = input(id: 'rebuild', message: 'Artifact Already exist! Do you wish to rebuild?', 
+                                    parameters: [
+                                                  [  
+                                                    $class: 'BooleanParameterDefinition', 
+                                                    defaultValue: false, 
+                                                    description: '', 
+                                                    name: 'Please confirm you agree with this'
+                                                  ]
+                                                ]
+                                    )
+              }
+            }catch(err) {
+              def user = err.getCauses()[0].getUser()
+              if('SYSTEM' == user.toString()) { // SYSTEM means timeout.
+                echo "**Artifact already exists!, No response received from the user for Re - Build"
+              } else {
+                userInput = false
+                echo "**Artifact already exists!, Re - Build request aborted by the user"
+              }
+            }
+            
+            if (userInput == true) {
+              echo "**Building artifact ${pom.artifactId} against version ${pom.version}**"
+              rtMaven.run pom: 'pom.xml', goals: 'clean install', buildInfo: buildInfo
+              uploadArtifact = true
+              echo "**Successfully Build artifact ${pom.artifactId} against version ${pom.version}**"
+            } 
+            
+          } // if block ends here 
+          else if(artifactBuildInfo != null && DEPLOY_TO_QA){
+            echo "*****************************************************************************"
+            echo "********************[ ENVIRONMENT-${params.Env} ]****************************"
+            echo "**Build Artifact stage will be skipped, Reason -Artifact was found in JFROG!**"
+            echo "*****************************************************************************"
+            echo "*****************************************************************************"
+            echo "*****************************************************************************"
+          } //else if ends here 
+          else {
+            if(DEPLOY_TO_DEV){
+              //it is assumed code will only come here when the deploy to DEV is selected and the artifact doesnot exist in the JFROG
+              echo "**Building artifact ${pom.artifactId} against version ${pom.version}**"
+              rtMaven.run pom: 'pom.xml', goals: 'clean install', buildInfo: buildInfo
+              uploadArtifact = true
+              echo "**Successfully Build artifact ${pom.artifactId} against version ${pom.version}**"
+            } else{
+              //it is assumed code will only come here when the deploy to QA is selected and the artifact doesnot exist in the JFROG
+              //at this point promotion should take place
+            }
+          } //else ends here
+          
+       }//main block else ends here
      }
      
-     if(IS_RELEASE){
-        echo "*****************************************************************************"
-        echo "*****************************************************************************"
-        echo "**Build Artifact stage will be skipped, Reason IS_RELEASE set to ${release}**"
-        echo "*****************************************************************************"
-        echo "*****************************************************************************"
-        echo "*****************************************************************************"
-     }else if(VERSION_REQUESTED){
-        echo "*****************************************************************************"
-        echo "*****************************************************************************"
-        echo "**Build Artifact stage will be skipped, Reason VERSION_REQUESTED set to ${release}**"
-        echo "*****************************************************************************"
-        echo "*****************************************************************************"
-        echo "*****************************************************************************"
+     stage("Deploy To JFROG"){
+       if(uploadArtifact){
+         echo "**Publishing artifact ${pom.artifactId}, version ${pom.version} to JFROG Repository**"
+         server.publishBuildInfo buildInfo
+       }
      }
      
-     def downloadSnapshot = DEPLOY_TO_DEV ? true : false
+     stage ('Promotion') {
+        promotionConfig = [
+            //Mandatory parameters
+            'buildName'          : buildInfo.name,
+            'buildNumber'        : buildInfo.number,
+            'targetRepo'         : 'cetera-maven-releases',
+
+            //Optional parameters
+            'comment'            : 'Promoting the artifact for production',
+            'sourceRepo'         : 'cetera-maven-snapshots',
+            'status'             : 'Released',
+            'includeDependencies': true,
+            'failFast'           : true,
+            'copy'               : true
+        ]
+
+        // Promote build
+        server.promote promotionConfig
+    }
      
-     def artifactBuildInfo = commonUtils.downloadArtifacts( commonUtils.prepareTargetFolder("${pom.artifactId}" , "${pom.version}" , downloadSnapshot),
-                                                            commonUtils.prepareSearchPattern("${pom.artifactId}" , "${pom.version}" , downloadSnapshot)
-                                                           );
-     
-     echo artifactBuildInfo 
-   }
+   }//try ends here
+   catch(Exception err) {
+      echo "Error occurred while running the job '${env.JOB_NAME}' , $err"
+      currentBuild.result = 'FALIURE'
+   } finally {
    
+   }
 }

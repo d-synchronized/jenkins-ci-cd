@@ -37,4 +37,8 @@ def prepareSearchPattern(String artifactId, String version , boolean downloadSna
    return pattern
 }
 
+def buildProject(){
+
+}
+
 return this
