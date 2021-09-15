@@ -161,7 +161,7 @@ node () {
             def userInput = true
             try{
               timeout(time: 30, unit: 'SECONDS') {
-              def userInput = input(id: 'rebuild', message: 'Artifact Already exist! Do you wish to rebuild?', 
+                userInput = input(id: 'rebuild', message: 'Artifact Already exist! Do you wish to rebuild?', 
                                     parameters: [
                                                   [  
                                                     $class: 'BooleanParameterDefinition', 
