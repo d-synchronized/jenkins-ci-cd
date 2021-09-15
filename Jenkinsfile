@@ -233,7 +233,7 @@ node () {
                                                                  commonUtils.prepareSearchPattern("${pom.artifactId}" , "${pom.version}" , downloadSnapshot)
                                                                 );
                                                                 
-          echo "${artifactBuildInfo}"
+          echo "${artifactBuildInfo.buildNumber}"
           if(artifactBuildInfo != null){
             echo "*****************************************************************************"
             echo "********************[ ENVIRONMENT-${params.Env} ]****************************"
