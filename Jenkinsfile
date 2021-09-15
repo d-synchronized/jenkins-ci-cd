@@ -87,6 +87,8 @@ node () {
       ])//parameters ends here
    ])//properties ends here
    
+   def rtMaven = Artifactory.newMavenBuild()
+   
    def repoUrl = 'https://github.com/d-synchronized/jenkins-ci-cd.git'
    def pom
    def commonUtils
