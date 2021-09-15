@@ -26,9 +26,9 @@ def downloadArtifacts(String pattern, String target){
     echo "${err}"
     buildInfo = null
   }
-  if(buildInfo != null)(
+  if(buildInfo != null){
     server.publishBuildInfo buildInfo
-  )
+  }
   return buildInfo                 
 }
 
