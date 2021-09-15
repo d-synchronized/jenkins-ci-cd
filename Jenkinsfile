@@ -249,7 +249,6 @@ node () {
                                                                commonUtils.prepareSearchPattern("${pom.artifactId}" , "${pom.version}" , downloadSnapshot),
                                                                commonUtils.prepareTargetFolder("${pom.artifactId}" , "${pom.version}" , downloadSnapshot)
                                                               );
-            echo "${artifactBuildInfo.number}"                                                    
             promotionConfig = [
               //Mandatory parameters
               'buildName'          : artifactBuildInfo.name,
