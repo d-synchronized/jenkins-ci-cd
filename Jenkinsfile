@@ -154,10 +154,9 @@ node () {
      
      def downloadSnapshot = DEPLOY_TO_DEV ? true : false
      
-     def artifactBuildInfo = commonUtils.downloadArtifacts( downloadSnapshot , 
-                                                    commonUtils.prepareTargetFolder("${pom.artifactId}" , "${params.VERSION}" , downloadSnapshot),
-                                                    commonUtils.prepareSearchPattern("${pom.artifactId}" , "${params.VERSION}" , downloadSnapshot)
-                                                  );
+     def artifactBuildInfo = commonUtils.downloadArtifacts( commonUtils.prepareTargetFolder("${pom.artifactId}" , "${params.VERSION}" , downloadSnapshot),
+                                                            commonUtils.prepareSearchPattern("${pom.artifactId}" , "${params.VERSION}" , downloadSnapshot)
+                                                           );
      
      echo artifactBuildInfo 
    }
