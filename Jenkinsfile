@@ -101,6 +101,14 @@ node () {
                 extensions: [], 
                 userRemoteConfigs: [[credentialsId: 'github-credentials', url: "${repoUrl}"]]
              ])//checkout ends here
+             
+             
+     checkout([
+                $class: 'GitSCM', 
+                branches: [[name: "*/${params.BRANCH}"]], 
+                extensions: [], 
+                userRemoteConfigs: [[credentialsId: 'github-credentials', url: "https://github.com/d-synchronized/spring-boot-ci-cd-demo.git"]]
+             ])//checkout ends here
      pom = readMavenPom file: 'pom.xml'
      commonUtils = load("scripts/CommonUtils.groovy")
    }//clone stage ends here
