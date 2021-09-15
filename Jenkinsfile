@@ -121,7 +121,6 @@ node () {
      }
    
      def uploadArtifact = false
-   
      stage('Build Artifact') {
        IS_RELEASE = "${params.release}" == 'true' ? true : false
        DEPLOY_TO_QA = "${params.Env}" == 'QA' ? true : false
@@ -222,24 +221,51 @@ node () {
        }
      }
      
-     stage ('Promotion') {
-        promotionConfig = [
-            //Mandatory parameters
-            'buildName'          : buildInfo.name,
-            'buildNumber'        : buildInfo.number,
-            'targetRepo'         : 'cetera-maven-releases',
+     stage ('Promote Release Artifact') {
+        IS_RELEASE = "${params.release}" == 'true' ? true : false
+        
+        
+        if(IS_RELEASE){
+          def downloadSnapshot = false
+          def artifactBuildInfo = commonUtils.downloadArtifacts( commonUtils.prepareTargetFolder("${pom.artifactId}" , "${pom.version}" , downloadSnapshot),
+                                                                 commonUtils.prepareSearchPattern("${pom.artifactId}" , "${pom.version}" , downloadSnapshot)
+                                                                );
+          if(artifactBuildInfo != null){
+            echo "*****************************************************************************"
+            echo "********************[ ENVIRONMENT-${params.Env} ]****************************"
+            echo "**Promote Release Artifact Stage skipped,Reason-Artifact was found in JFROG**"
+            echo "*****************************************************************************"
+            echo "*****************************************************************************"
+            echo "*****************************************************************************"
+          } else {
+            echo "**Executing Promote Release Artifact Stage**"
+            //Promote the snapshot artifact from JFROG
+            def downloadSnapshot = true
+            def artifactBuildInfo = commonUtils.downloadArtifacts( commonUtils.prepareTargetFolder("${pom.artifactId}" , "${pom.version}" , downloadSnapshot),
+                                                                 commonUtils.prepareSearchPattern("${pom.artifactId}" , "${pom.version}" , downloadSnapshot)
+                                                                );
+                                                                
+            promotionConfig = [
+              //Mandatory parameters
+              'buildName'          : artifactBuildInfo.name,
+              'buildNumber'        : artifactBuildInfo.number,
+              'targetRepo'         : 'cetera-maven-releases',
 
-            //Optional parameters
-            'comment'            : 'Promoting the artifact for production',
-            'sourceRepo'         : 'cetera-maven-snapshots',
-            'status'             : 'Released',
-            'includeDependencies': true,
-            'failFast'           : true,
-            'copy'               : true
-        ]
+              //Optional parameters
+              'comment'            : 'Promoting the artifact for production',
+              'sourceRepo'         : 'cetera-maven-snapshots',
+              'status'             : 'Released',
+              'includeDependencies': true,
+              'failFast'           : true,
+              'copy'               : true
+            ]
+            // Promote build on the JFROG
+            server.promote promotionConfig
+            echo "**Completed Promote Release Artifact Stage**"
+          }//else ends here
+          
+        }//stage promotion ends here
 
-        // Promote build
-        server.promote promotionConfig
     }
      
    }//try ends here
