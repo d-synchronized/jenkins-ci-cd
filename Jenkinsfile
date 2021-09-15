@@ -228,9 +228,12 @@ node () {
         
         if(IS_RELEASE){
           def downloadSnapshot = false
+          
           def artifactBuildInfo = commonUtils.downloadArtifacts( commonUtils.prepareTargetFolder("${pom.artifactId}" , "${pom.version}" , downloadSnapshot),
                                                                  commonUtils.prepareSearchPattern("${pom.artifactId}" , "${pom.version}" , downloadSnapshot)
                                                                 );
+                                                                
+          echo "${artifactBuildInfo}"
           if(artifactBuildInfo != null){
             echo "*****************************************************************************"
             echo "********************[ ENVIRONMENT-${params.Env} ]****************************"
