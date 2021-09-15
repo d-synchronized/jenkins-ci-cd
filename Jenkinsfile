@@ -229,8 +229,9 @@ node () {
         if(IS_RELEASE){
           def downloadSnapshot = false
           
-          def artifactBuildInfo = commonUtils.downloadArtifacts( commonUtils.prepareTargetFolder("${pom.artifactId}" , "${pom.version}" , downloadSnapshot),
-                                                                 commonUtils.prepareSearchPattern("${pom.artifactId}" , "${pom.version}" , downloadSnapshot)
+          def artifactBuildInfo = commonUtils.downloadArtifacts( 
+                                                                 commonUtils.prepareSearchPattern("${pom.artifactId}" , "${pom.version}" , downloadSnapshot),
+                                                                 commonUtils.prepareTargetFolder("${pom.artifactId}" , "${pom.version}" , downloadSnapshot)
                                                                 );
                                                                 
           if(artifactBuildInfo != null){
@@ -244,9 +245,10 @@ node () {
             echo "**Executing Promote Release Artifact Stage**"
             //Promote the snapshot artifact from JFROG
             downloadSnapshot = true
-            artifactBuildInfo = commonUtils.downloadArtifacts( commonUtils.prepareTargetFolder("${pom.artifactId}" , "${pom.version}" , downloadSnapshot),
-                                                                 commonUtils.prepareSearchPattern("${pom.artifactId}" , "${pom.version}" , downloadSnapshot)
-                                                                );
+            artifactBuildInfo = commonUtils.downloadArtifacts( 
+                                                               commonUtils.prepareSearchPattern("${pom.artifactId}" , "${pom.version}" , downloadSnapshot),
+                                                               commonUtils.prepareTargetFolder("${pom.artifactId}" , "${pom.version}" , downloadSnapshot)
+                                                              );
                                                                 
             promotionConfig = [
               //Mandatory parameters
