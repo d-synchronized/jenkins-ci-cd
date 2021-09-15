@@ -152,9 +152,10 @@ node () {
           //def downloadSnapshot = DEPLOY_TO_DEV ? true : false
           //It is assumed the same snapshot will be depoyed to both dev and QA, promotion will happen in prod
           def downloadSnapshot = true
-          def artifactBuildInfo = commonUtils.downloadArtifacts( commonUtils.prepareTargetFolder("${pom.artifactId}" , "${pom.version}" , downloadSnapshot),
-                                                                 commonUtils.prepareSearchPattern("${pom.artifactId}" , "${pom.version}" , downloadSnapshot)
-                                                                );
+          def artifactBuildInfo = commonUtils.downloadArtifacts( 
+                                                                 commonUtils.prepareSearchPattern("${pom.artifactId}" , "${pom.version}" , downloadSnapshot),
+                                                                 commonUtils.prepareTargetFolder("${pom.artifactId}" , "${pom.version}" , downloadSnapshot),
+                                                               );
                                                            
           if(artifactBuildInfo != null && DEPLOY_TO_DEV){
             echo "**artifact ${pom.artifactId} against version ${pom.version} already available in the repository**"
