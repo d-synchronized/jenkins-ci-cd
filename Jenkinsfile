@@ -156,7 +156,7 @@ node () {
                                                                  commonUtils.prepareSearchPattern("${pom.artifactId}" , "${pom.version}" , downloadSnapshot),
                                                                  commonUtils.prepareTargetFolder("${pom.artifactId}" , "${pom.version}" , downloadSnapshot),
                                                                );
-          echo "${artifactBuildInfo.buildNumber}"
+          echo "${artifactBuildInfo.number}"
           if(artifactBuildInfo != null && DEPLOY_TO_DEV){
             echo "**artifact ${pom.artifactId} against version ${pom.version} already available in the repository**"
             def userInput = true
@@ -234,7 +234,7 @@ node () {
                                                                  commonUtils.prepareSearchPattern("${pom.artifactId}" , "${pom.version}" , downloadSnapshot)
                                                                 );
                                                                 
-          echo "${artifactBuildInfo.buildNumber}"
+          echo "${artifactBuildInfo.number}"
           if(artifactBuildInfo != null){
             echo "*****************************************************************************"
             echo "********************[ ENVIRONMENT-${params.Env} ]****************************"
