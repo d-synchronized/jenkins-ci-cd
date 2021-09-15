@@ -19,8 +19,13 @@ def downloadArtifacts(String pattern, String target){
                                      }
                                    ]
                         }"""
-   buildInfo = server.download spec: downloadSpec, failNoOp: false
-   return buildInfo                 
+  def buildInfo
+  try{
+   buildInfo = server.download spec: downloadSpec, failNoOp: true
+  }catch(err){
+    buildInfo = null
+  }
+  return buildInfo                 
 }
 
 
