@@ -259,7 +259,7 @@ node () {
               'comment'            : 'Promoting the artifact for production',
               'sourceRepo'         : 'cetera-maven-snapshots',
               'status'             : 'Released',
-              'includeDependencies': false,
+              'includeDependencies': true,
               'failFast'           : true,
               'copy'               : true
             ]
