@@ -122,7 +122,7 @@ node () {
    
      def uploadArtifact = false
      stage('Build Artifact') {
-       IS_RELEASE = "${params.release}" == 'true' ? true : false
+       IS_RELEASE = "${params.release}" == 'Yes' ? true : false
        DEPLOY_TO_QA = "${params.Env}" == 'QA' ? true : false
        DEPLOY_TO_DEV = "${params.Env}"  == 'DEV' ? true : false
        DEPLOY_TO_PROD = "${params.Env}"  == 'PROD' ? true : false
