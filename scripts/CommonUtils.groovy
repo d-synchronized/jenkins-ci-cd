@@ -33,7 +33,7 @@ def prepareTargetFolder(String artifactId, String version, boolean downloadSnaps
 def prepareSearchPattern(String artifactId, String version , boolean downloadSnapshot) {
    version = !downloadSnapshot && version.contains("SNAPSHOT") ? version.replace("-SNAPSHOT" , "") : version
    def repositoryName = downloadSnapshot ? "cetera-maven-snapshots" : "cetera-maven-releases"
-   def pattern = "${snapshotRepository}/com/example/${artifactId}/${version}/${artifactId}-*.war"
+   def pattern = "${repositoryName}/com/example/${artifactId}/${version}/${artifactId}-*.war"
    return pattern
 }
 
