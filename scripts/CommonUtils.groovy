@@ -22,11 +22,13 @@ def downloadArtifacts(String pattern, String target){
   def buildInfo
   try{
    buildInfo = server.download spec: downloadSpec, failNoOp: true
-   server.publishBuildInfo buildInfo
   }catch(err){
     echo "${err}"
     buildInfo = null
   }
+  if(buildInfo != null)(
+    server.publishBuildInfo buildInfo
+  )
   return buildInfo                 
 }
 

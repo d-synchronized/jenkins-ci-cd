@@ -260,7 +260,7 @@ node () {
               'sourceRepo'         : 'cetera-maven-snapshots',
               'status'             : 'Released',
               'includeDependencies': true,
-              'failFast'           : false,
+              'failFast'           : true,
               'copy'               : true
             ]
             // Promote build on the JFROG
