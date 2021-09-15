@@ -240,7 +240,7 @@ node () {
           } else {
             echo "**Executing Promote Release Artifact Stage**"
             //Promote the snapshot artifact from JFROG
-            def downloadSnapshot = true
+            downloadSnapshot = true
             def artifactBuildInfo = commonUtils.downloadArtifacts( commonUtils.prepareTargetFolder("${pom.artifactId}" , "${pom.version}" , downloadSnapshot),
                                                                  commonUtils.prepareSearchPattern("${pom.artifactId}" , "${pom.version}" , downloadSnapshot)
                                                                 );
