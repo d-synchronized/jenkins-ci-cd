@@ -223,7 +223,7 @@ node () {
      }
      
      stage ('Promote Release Artifact') {
-        IS_RELEASE = "${params.release}" == 'true' ? true : false
+        IS_RELEASE = "${params.release}" == 'Yes' ? true : false
         
         
         if(IS_RELEASE){
