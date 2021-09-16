@@ -100,8 +100,9 @@ node () {
      stage('Clone') { 
        IS_RELEASE = "${params.release}" == 'Yes' ? true : false
        TAG_SELECTED = "${params.TAG}" != '' ? true : false
+       echo "${params.TAG_SELECTED}"
        if(TAG_SELECTED){
-         echo "***Checking out source code from repo url ${repoUrl},tagName ${params.TAG}, deploy from repo ${params.DEPLOY_FROM_REPO}***"
+         echo "***Checking out source code from repo url ${repoUrl},tagName ${params.TAG}***"
          checkout([
                   $class: 'GitSCM', 
                   branches: [[name: "*/${params.BRANCH}"]], 
@@ -109,7 +110,7 @@ node () {
                   userRemoteConfigs: [[credentialsId: 'github-dsync-token-mb', url: "${repoUrl}" , branches: [[name: 'refs/tags/${params.TAG}']]]]
          ])//checkout ends here
        }else {
-         echo "***Checking out source code from repo url ${repoUrl},branchName ${params.BRANCH}, deploy from repo ${params.DEPLOY_FROM_REPO}***"
+         echo "***Checking out source code from repo url ${repoUrl},branchName ${params.BRANCH}***"
          checkout([
                   $class: 'GitSCM', 
                   branches: [[name: "*/${params.BRANCH}"]], 
