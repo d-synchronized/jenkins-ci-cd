@@ -316,7 +316,7 @@ node () {
        
        if(TAG_SELECTED){
          dir("target") {
-           echo "targetWarDirectory"
+           echo "${targetWarDirectory}"
            fileOperations([fileCopyOperation(excludes: '', flattenFiles: true, includes: '*.war', targetLocation: "${targetWarDirectory}")])
          }
        } else {
