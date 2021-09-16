@@ -101,7 +101,7 @@ node () {
                   $class: 'GitSCM', 
                   branches: [[name: "*/${params.BRANCH}"]], 
                   extensions: [], 
-                  userRemoteConfigs: [[credentialsId: 'github-credentials', url: "${repoUrl}"]]
+                  userRemoteConfigs: [[credentialsId: 'github-dsync-token-mb', url: "${repoUrl}"]]
                ])//checkout ends here
              
              
@@ -135,7 +135,7 @@ node () {
          else {
            echo "**RELEASE : Creating TAG for  artifact ${pom.artifactId} against version ${pom.version}**"
            NEW_TAG = "RELEASE-${pom.version}"
-           withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+           withCredentials([usernamePassword(credentialsId: 'github-dsync-token-mb', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
              bat "git tag -a ${NEW_TAG} -m \"pushing TAG VERSION ${NEW_TAG}\""
              bat "git push https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/jenkins-ci-cd-demo.git --tags"
            }//with credentials ends here
