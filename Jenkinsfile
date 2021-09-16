@@ -95,15 +95,31 @@ node () {
    def commonUtils
    
    def buildInfo
+   def TAG_SELECTED = false
    try {
      stage('Clone') { 
        echo "***Checking out source code from repo url ${repoUrl},branchName ${params.BRANCH}, deploy from repo ${params.DEPLOY_FROM_REPO}***"
-       checkout([
+       IS_RELEASE = "${params.release}" == 'Yes' ? true : false
+       TAG_SELECTED = "${params.TAG}" == '' ? false : true
+       if(TAG_SELECTED){
+         echo '**Clone Stage : Checking out TAG ${params.TAG}**'
+         checkout([
                   $class: 'GitSCM', 
                   branches: [[name: "*/${params.BRANCH}"]], 
                   extensions: [], 
-                  userRemoteConfigs: [[credentialsId: 'github-dsync-token-mb', url: "${repoUrl}"]]
-               ])//checkout ends here
+                  userRemoteConfigs: [[credentialsId: 'github-dsync-token-mb', url: "${repoUrl}" , branches: [[name: 'refs/tags/${params.TAG}']]]]
+         ])//checkout ends here
+         echo '**Clone Stage : Checking out TAG ${params.TAG}**'
+       }else {
+         echo '**Clone Stage : Checking out Branch ${params.BRANCH}**'
+         checkout([
+                  $class: 'GitSCM', 
+                  branches: [[name: "*/${params.BRANCH}"]], 
+                  extensions: [], 
+                  userRemoteConfigs: [[credentialsId: 'github-dsync-token-mb', url: "${repoUrl}" ]]
+         ])//checkout ends here
+         echo '**Clone Stage : Checking out Branch ${params.BRANCH}**'
+       }
              
              
        pom = readMavenPom file: 'pom.xml'
@@ -127,7 +143,7 @@ node () {
      def TAG_CREATED = false
      stage ('Create TAG') {
        IS_RELEASE = "${params.release}" == 'Yes' ? true : false
-       if(IS_RELEASE){
+       if(IS_RELEASE && !TAG_SELECTED){
        
          ARTIFACT_ALREADY_PRESENT = commonUtils.checkIfArtifactAlreadyExistInRepo("${pom.artifactId}" , "${pom.version}" , false)
          if(ARTIFACT_ALREADY_PRESENT){
@@ -144,6 +160,13 @@ node () {
            TAG_CREATED = true
            echo "**RELEASE : Created TAG for artifact ${pom.artifactId} against version ${pom.version}**"
          }//else ends here
+       }else if(IS_RELEASE && TAG_SELECTED){
+         echo "*****************************************************************************"
+         echo "*********************[ ENVIRONMENT-${params.Env} ]****************************"
+         echo "**Create TAG stage will be skipped, Reason TAG ${params.TAG} selected********"
+         echo "*****************************************************************************"
+         echo "*****************************************************************************"
+         echo "*****************************************************************************"
        }else{
          echo "*****************************************************************************"
          echo "*********************[ ENVIRONMENT-${params.Env} ]****************************"
@@ -195,7 +218,7 @@ node () {
        * 3. We are deploying to Prod and version is not requested
        **/
        if(IS_RELEASE){
-          if(TAG_CREATED && SNAPSHOT_CREATED){
+          if( (TAG_CREATED || TAG_SELECTED ) || SNAPSHOT_CREATED) {
             echo "**RELEASE : Building artifact ${pom.artifactId} against version ${pom.version}**"
             rtMaven.run pom: 'pom.xml', goals: 'clean install', buildInfo: buildInfo
             server.publishBuildInfo buildInfo
