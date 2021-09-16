@@ -98,27 +98,24 @@ node () {
    def TAG_SELECTED = false
    try {
      stage('Clone') { 
-       echo "***Checking out source code from repo url ${repoUrl},branchName ${params.BRANCH}, deploy from repo ${params.DEPLOY_FROM_REPO}***"
        IS_RELEASE = "${params.release}" == 'Yes' ? true : false
-       TAG_SELECTED = "${params.TAG}" == '' ? false : true
+       TAG_SELECTED = "${params.TAG}" != '' ? true : false
        if(TAG_SELECTED){
-         echo '**Clone Stage : Checking out TAG ${params.TAG}**'
+         echo "***Checking out source code from repo url ${repoUrl},tagName ${params.TAG}, deploy from repo ${params.DEPLOY_FROM_REPO}***"
          checkout([
                   $class: 'GitSCM', 
                   branches: [[name: "*/${params.BRANCH}"]], 
                   extensions: [], 
                   userRemoteConfigs: [[credentialsId: 'github-dsync-token-mb', url: "${repoUrl}" , branches: [[name: 'refs/tags/${params.TAG}']]]]
          ])//checkout ends here
-         echo '**Clone Stage : Checking out TAG ${params.TAG}**'
        }else {
-         echo '**Clone Stage : Checking out Branch ${params.BRANCH}**'
+         echo "***Checking out source code from repo url ${repoUrl},branchName ${params.BRANCH}, deploy from repo ${params.DEPLOY_FROM_REPO}***"
          checkout([
                   $class: 'GitSCM', 
                   branches: [[name: "*/${params.BRANCH}"]], 
                   extensions: [], 
                   userRemoteConfigs: [[credentialsId: 'github-dsync-token-mb', url: "${repoUrl}" ]]
          ])//checkout ends here
-         echo '**Clone Stage : Checking out Branch ${params.BRANCH}**'
        }
              
              
