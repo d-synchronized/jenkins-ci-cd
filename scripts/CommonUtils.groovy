@@ -29,6 +29,16 @@ def downloadArtifacts(String pattern, String target){
   return buildInfo                 
 }
 
+def checkIfArtifactAlreadyExistInRepo(String artifactId, String version, boolean validateSnapshots){
+  def artifactBuildInfo = commonUtils.downloadArtifacts( 
+                                                         commonUtils.prepareSearchPattern(artifactId , version , validateSnapshots),
+                                                         commonUtils.prepareTargetFolder(artifactId , version , validateSnapshots)
+  if(artifactBuildInfo == null){
+    return false
+  }             
+  return true
+}
+
 
 def prepareTargetFolder(String artifactId, String version, boolean downloadSnapshot){
    version = !downloadSnapshot && version.contains("SNAPSHOT") ? version.replace("-SNAPSHOT" , "") : version
