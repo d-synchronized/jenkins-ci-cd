@@ -218,13 +218,17 @@ node () {
        * 3. We are deploying to Prod and version is not requested
        **/
        if(IS_RELEASE){
-          if( (TAG_CREATED || TAG_SELECTED ) || SNAPSHOT_CREATED) {
+          if( TAG_CREATED && SNAPSHOT_CREATED) {
             echo "**RELEASE : Building artifact ${pom.artifactId} against version ${pom.version}**"
             rtMaven.run pom: 'pom.xml', goals: 'clean install', buildInfo: buildInfo
             server.publishBuildInfo buildInfo
             uploadArtifact = true
             echo "**RELEASE : Successfully Build artifact ${pom.artifactId} against version ${pom.version}**"
-          }else{
+          } else if(TAG_SELECTED){
+            echo "**Build from TAG : Building Artifact ${pom.artifactId} with Version ${pom.version}**"
+          bat([script: 'mvn clean install']) 
+            echo "**Build from TAG : Building Artifact ${pom.artifactId} with Version ${pom.version}**"
+          } else{
             echo "**RELEASE FAILED : Previous Stages(Create TAG / Drop SNAPSHOt ) Failed!!**"
           }
        }else if(VERSION_REQUESTED){
