@@ -107,6 +107,9 @@ node () {
              
        pom = readMavenPom file: 'pom.xml'
        commonUtils = load("scripts/CommonUtils.groovy")
+       
+       bat "git config user.name 'Dishant Anand'"
+       bat "git config user.email d.synchronized@gmail.com"
      }//clone stage ends here
       
      stage ('Artifactory Configuration') {
