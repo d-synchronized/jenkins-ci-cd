@@ -30,10 +30,10 @@ def downloadArtifacts(String pattern, String target){
 }
 
 def checkIfArtifactAlreadyExistInRepo(String artifactId, String version, boolean validateSnapshots){
-  def artifactBuildInfo = commonUtils.downloadArtifacts( 
-                                                         commonUtils.prepareSearchPattern(artifactId , version , validateSnapshots),
-                                                         commonUtils.prepareTargetFolder(artifactId , version , validateSnapshots)
-                                                       )
+  def artifactBuildInfo = downloadArtifacts( 
+                                             prepareSearchPattern(artifactId , version , validateSnapshots),
+                                             prepareTargetFolder(artifactId , version , validateSnapshots)
+                                           )
   if(artifactBuildInfo == null){
     return false
   }             
