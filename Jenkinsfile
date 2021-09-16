@@ -137,7 +137,7 @@ node () {
            NEW_TAG = "RELEASE-${pom.version}"
            withCredentials([usernamePassword(credentialsId: 'github-dsync-token-mb', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
              bat "git tag -a ${NEW_TAG} -m \"pushing TAG VERSION ${NEW_TAG}\""
-             bat "git push https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/jenkins-ci-cd-demo.git --tags"
+             bat "git push https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/d-synchronized/jenkins-ci-cd.git --tags"
            }//with credentials ends here
            
            TAG_CREATED = true
