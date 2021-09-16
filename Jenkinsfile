@@ -308,7 +308,7 @@ node () {
      
      def artifactDownloaded = false
      stage ("Download Artifact From JFROG"){
-       def targetWarDirectory = "${pom.artifactId}/${pom.version}"
+       def targetWarDirectory = "${pom.artifactId}/${pom.version}/"
        
        dir("${targetWarDirectory}"){
          deleteDir()
