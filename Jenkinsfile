@@ -306,9 +306,30 @@ node () {
        }//main block else ends here
      }
      
+     def artifactDownloaded = false
+     stage ("Download Artifact From JFROG"){
+       def targetWarDirectory = "${pom.artifactId}/${pom.version}"
+       
+       dir("${targetWarDirectory}"){
+         deleteDir()
+       }
+       
+       if(TAG_SELECTED){
+         dir("target") {
+           def targetWarDirectory = "${pom.artifactId}/${pom.version}"
+           fileOperations([fileCopyOperation(excludes: '', flattenFiles: true, includes: '*.war', targetLocation: "${targetWarDirectory}")])
+         }
+       } else {
+         IS_RELEASE = "${params.release}" == 'Yes' ? true : false
+         artifactDownloaded = commonUtils.checkIfArtifactAlreadyExistInRepo("${pom.artifactId}" , "${pom.version}" , IS_RELEASE)
+       }
+     }
      
      stage ('Deploy') {
-       echo 'Deploy to server!'
+       if(artifactDownloaded){
+         def sourceWarDirectory = "${pom.artifactId}/${pom.version}"
+         deploy adapters: [tomcat8(url: "http://localhost:8082/", credentialsId: 'tomcat')], war: "${sourceWarDirectory}/*.war", contextPath: "${artifactId}"
+       }
      }
      
    }//try ends here

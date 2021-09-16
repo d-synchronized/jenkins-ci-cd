@@ -44,7 +44,8 @@ def checkIfArtifactAlreadyExistInRepo(String artifactId, String version, boolean
 def prepareTargetFolder(String artifactId, String version, boolean downloadSnapshot){
    version = !downloadSnapshot && version.contains("SNAPSHOT") ? version.replace("-SNAPSHOT" , "") : version
    def targetFolderInfix = downloadSnapshot ? "SNAPSHOTS" : "RELEASES"
-   def targetFolder = "${artifactId}/${targetFolderInfix}/${version}/"
+   //def targetFolder = "${artifactId}/${targetFolderInfix}/${version}/"
+   def targetFolder = "${artifactId}/${version}/"
    return targetFolder
 }
 
