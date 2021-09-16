@@ -234,6 +234,10 @@ node () {
           echo "*****************************************************************************"
           echo "*****************************************************************************"
           echo "*****************************************************************************"
+       } else if(TAG_SELECTED){
+          echo "**Build from TAG : Building Artifact ${pom.artifactId} with Version ${pom.version}**"
+          bat([script: 'mvn clean install']) 
+          echo "**Build from TAG : Building Artifact ${pom.artifactId} with Version ${pom.version}**"
        } else{
           //def downloadSnapshot = DEPLOY_TO_DEV ? true : false
           //It is assumed the same snapshot will be depoyed to both dev and QA, promotion will happen in prod
