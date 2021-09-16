@@ -33,6 +33,7 @@ def checkIfArtifactAlreadyExistInRepo(String artifactId, String version, boolean
   def artifactBuildInfo = commonUtils.downloadArtifacts( 
                                                          commonUtils.prepareSearchPattern(artifactId , version , validateSnapshots),
                                                          commonUtils.prepareTargetFolder(artifactId , version , validateSnapshots)
+                                                       )
   if(artifactBuildInfo == null){
     return false
   }             
