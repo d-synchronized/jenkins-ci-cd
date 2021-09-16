@@ -316,7 +316,6 @@ node () {
        
        if(TAG_SELECTED){
          dir("target") {
-           def targetWarDirectory = "${pom.artifactId}/${pom.version}"
            fileOperations([fileCopyOperation(excludes: '', flattenFiles: true, includes: '*.war', targetLocation: "${targetWarDirectory}")])
          }
        } else {
