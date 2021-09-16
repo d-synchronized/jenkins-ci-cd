@@ -150,13 +150,19 @@ node () {
        }
      }
      
+     def SNAPSHOT_CREATED = false
      stage("Drop SNAPSHOT"){
        IS_RELEASE = "${params.release}" == 'Yes' ? true : false
-       if(IS_RELEASE && TAG_CREATED){
-         echo "RELEASE : Dropping '-SNAPSHOT' from the artifact version against artifactId '${pom.artifactId}' and version '${pom.version}'"
-         bat "mvn versions:set -DremoveSnapshot -DgenerateBackupPoms=false"
-         pom = readMavenPom file: 'pom.xml'
-         echo "**RELEASE : Completed Drop SNAPSHOT stage, ArtifactId - ${pom.artifactId}, Version - ${pom.version}**"
+       if(IS_RELEASE){
+         if(TAG_CREATED){
+           echo "RELEASE : Dropping '-SNAPSHOT' from the artifact version against artifactId '${pom.artifactId}' and version '${pom.version}'"
+           bat "mvn versions:set -DremoveSnapshot -DgenerateBackupPoms=false"
+           pom = readMavenPom file: 'pom.xml'
+           SNAPSHOT_CREATED = true
+           echo "**RELEASE : Completed Drop SNAPSHOT stage, ArtifactId - ${pom.artifactId}, Version - ${pom.version}**"
+         } else {
+           echo "**RELEASE FAILED : TAG Creation Failed**"
+         }
        } 
        else {
          echo "*****************************************************************************"
@@ -184,12 +190,16 @@ node () {
        * 2. We are deploying to QA and version is not requested
        * 3. We are deploying to Prod and version is not requested
        **/
-       if(IS_RELEASE && TAG_CREATED){
-          echo "**RELEASE : Building artifact ${pom.artifactId} against version ${pom.version}**"
-          rtMaven.run pom: 'pom.xml', goals: 'clean install', buildInfo: buildInfo
-          server.publishBuildInfo buildInfo
-          uploadArtifact = true
-          echo "**RELEASE : Successfully Build artifact ${pom.artifactId} against version ${pom.version}**"
+       if(IS_RELEASE){
+          if(TAG_CREATED && SNAPSHOT_CREATED){
+            echo "**RELEASE : Building artifact ${pom.artifactId} against version ${pom.version}**"
+            rtMaven.run pom: 'pom.xml', goals: 'clean install', buildInfo: buildInfo
+            server.publishBuildInfo buildInfo
+            uploadArtifact = true
+            echo "**RELEASE : Successfully Build artifact ${pom.artifactId} against version ${pom.version}**"
+          }else{
+            echo "**RELEASE FAILED : Previous Stages(Create TAG / Drop SNAPSHOt ) Failed!!**"
+          }
        }else if(VERSION_REQUESTED){
           echo "*****************************************************************************"
           echo "*****************************************************************************"
