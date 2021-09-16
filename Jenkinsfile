@@ -181,7 +181,7 @@ node () {
      stage("Drop SNAPSHOT"){
        IS_RELEASE = "${params.release}" == 'Yes' ? true : false
        if(IS_RELEASE){
-         if(TAG_CREATED){
+         if(TAG_CREATED || TAG_SELECTED){
            echo "RELEASE : Dropping '-SNAPSHOT' from the artifact version against artifactId '${pom.artifactId}' and version '${pom.version}'"
            bat "mvn versions:set -DremoveSnapshot -DgenerateBackupPoms=false"
            pom = readMavenPom file: 'pom.xml'
