@@ -119,9 +119,9 @@ node () {
          ])//checkout ends here
        }
              
-             
-       pom = readMavenPom file: 'spring-boot-demo/pom.xml'
-       commonUtils = load("spring-boot-demo/scripts/CommonUtils.groovy")
+       bat "cd spring-boot-demo"             
+       pom = readMavenPom file: 'pom.xml'
+       commonUtils = load("scripts/CommonUtils.groovy")
        
        bat "git config user.name 'Dishant Anand'"
        bat "git config user.email d.synchronized@gmail.com"
