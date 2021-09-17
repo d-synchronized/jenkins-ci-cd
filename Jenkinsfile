@@ -119,8 +119,6 @@ node () {
          ])//checkout ends here
        }
              
-       bat "cd spring-boot-demo"          
-       bat "dir"             
        pom = readMavenPom file: 'pom.xml'
        commonUtils = load("scripts/CommonUtils.groovy")
        
