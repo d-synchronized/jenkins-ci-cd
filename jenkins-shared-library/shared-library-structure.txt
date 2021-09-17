@@ -1,0 +1,9 @@
+(root)
++- src # Groovy source files
+|
++- vars
+|
++- test # unit test files
+|
++- resources # resource files
+|
