@@ -120,7 +120,7 @@ node () {
        }
              
              
-       pom = readMavenPom file: 'pom.xml'
+       pom = readMavenPom file: 'spring-boot-demo/pom.xml'
        commonUtils = load("scripts/CommonUtils.groovy")
        
        bat "git config user.name 'Dishant Anand'"
