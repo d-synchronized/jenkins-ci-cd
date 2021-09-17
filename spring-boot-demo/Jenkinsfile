@@ -83,7 +83,7 @@ node () {
            ]
         ],//Cascade Choide Parameter ends here
         gitParameter(branchFilter: 'origin/(.*)', defaultValue: 'development', name: 'BRANCH', type: 'PT_BRANCH'),
-        gitParameter(branchFilter: 'origin/(.*)', defaultValue: '', name: 'TAG', type: 'PT_TAG'),
+        //gitParameter(branchFilter: 'origin/(.*)', defaultValue: '', name: 'TAG', type: 'PT_TAG'),
         string(defaultValue: '', name: 'version', trim: true, description: 'Which version to deploy?')
       ])//parameters ends here
    ])//properties ends here
