@@ -38,10 +38,11 @@ def downloadArtifacts(String pattern, String target , Object server){
   return buildInfo                 
 }
 
-def checkIfArtifactAlreadyExistInRepo(String artifactId, String version, boolean validateSnapshots){
+def checkIfArtifactAlreadyExistInRepo(String artifactId, String version, boolean validateSnapshots, Object server){
   def artifactBuildInfo = downloadArtifacts( 
                                              prepareSearchPattern(artifactId , version , validateSnapshots),
-                                             prepareTargetFolder(artifactId , version , validateSnapshots)
+                                             prepareTargetFolder(artifactId , version , validateSnapshots),
+											 server
                                            )
   if(artifactBuildInfo == null){
     return false
