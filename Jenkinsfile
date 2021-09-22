@@ -207,7 +207,10 @@ node () { //node('worker_node')
        def environmentValue = "${params.Env}"
        switch(environmentValue){
          case "DEV":
-          build job: 'cboss-common-services-devDeploy', parameters: [[$class: 'StringParameterValue', name: 'VERSION', value: "${pom.version}"]]
+          build job: 'cboss-common-services-devDeploy', parameters: [
+                                                                      [$class: 'StringParameterValue', name: 'VERSION', value: "${pom.version}"],
+                                                                      [$class: 'StringParameterValue', name: 'SERVER', value: "dweblnl025"] 
+                                                                    ]
           break
          case "QA":
           build job: 'cboss-common-services-qaDeploy', parameters: [[$class: 'StringParameterValue', name: 'VERSION', value: "${pom.version}"]]

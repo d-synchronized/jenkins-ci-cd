@@ -3,13 +3,13 @@ node () { //node('worker_node')
    properties([
       parameters([
            string(defaultValue: '', name: 'VERSION', trim: true, description: 'If VERSION is specified, artifact will be downloaded from Repository'),
-           string(defaultValue: 'http://localhost:8082/', name: 'SERVER', trim: true),
+           choice(choices: ["dweblnl025", "dapplnl052"], name: 'SERVER'),
       ]),
       disableConcurrentBuilds()
    ])
    
-   def artifactId = 'common-services'
    def IS_RELEASE = false
+   def artifactId = 'common-services'
    try {
      stage ('Artifactory Configuration') {
        // Obtain an Artifactory server instance, defined in Jenkins --> Manage Jenkins --> Configure System:
@@ -24,30 +24,81 @@ node () { //node('worker_node')
      stage('Download Artifact') {
        echo "DEV DEPLOY : Downloading Artifact ${artifactId} with Version ${VERSION} not found"
        ARTIFACT_ALREADY_PRESENT = commonUtils.checkIfArtifactAlreadyExistInRepo("${artifactId}" ,
-                                                                                "${VERSION}" , 
+                                                                                "${params.VERSION}" , 
                                                                                  IS_RELEASE ? false : true,
                                                                                  server)
        if(ARTIFACT_ALREADY_PRESENT){
          echo "DEV DEPLOY : Successfully downloaded Artifact ${artifactId} with Version ${VERSION}"
        } else {
-         echo "Artifact ${artifactId} with Version ${VERSION} not found"
+         echo "Artifact ${artifactId} with Version ${params.VERSION} not found"
        }                                                                         
      }//Download Artifact ends here
       
      
      stage('Publish To Application/Web Server') {
-       echo "DEV DEPLOY: Deploying to default tomcat server"
+       echo "DEV DEPLOY: Deploying to default tomcat server ${params.SERVER}"
      }//Publish To Application/Web Server stage ends here
      currentBuild.result = 'SUCCESS'
    } catch(Exception err) {
       echo "Error occurred while running the job '${env.JOB_NAME}' , $err"
       currentBuild.result = 'FALIURE'
-      //revertParentPOM("${previousPomVersion}")
-      if("${params.RELEASE}" == 'true'){
-         deleteTag("${tagVersionCreated}")
-      }
    } finally {
        //deleteDir()
    }
    
+}
+
+
+def downloadArtifacts(String pattern, String target , Object server){
+  echo "Downloading artifact against pattern ${pattern}  ,Target folder ${target}"
+  def downloadSpec = """{
+                          "files": [
+                                     {
+                                       "pattern": "${pattern}",
+                                       "target": "${target}",
+                                       "recursive": "true",
+                                       "flat" : "true",
+                                       "sortBy" : [ "created" ],
+                                       "sortOrder" : "desc",
+                                       "limit": "1"
+                                     }
+                                   ]
+                        }"""
+  def buildInfo
+  try{
+   buildInfo = server.download spec: downloadSpec, failNoOp: true
+   server.publishBuildInfo buildInfo
+  }catch(err){
+    echo "Error occurred while running the job' , $err"
+    buildInfo = null
+  }
+  return buildInfo                 
+}
+
+def checkIfArtifactAlreadyExistInRepo(String artifactId, String version, boolean validateSnapshots, Object server){
+  def artifactBuildInfo = downloadArtifacts( 
+                                             prepareSearchPattern(artifactId , version , validateSnapshots),
+                                             prepareTargetFolder(artifactId , version , validateSnapshots),
+											 server
+                                           )
+  if(artifactBuildInfo == null){
+    return false
+  }             
+  return true
+}
+
+
+def prepareTargetFolder(String artifactId, String version, boolean downloadSnapshot){
+   version = !downloadSnapshot && version.contains("SNAPSHOT") ? version.replace("-SNAPSHOT" , "") : version
+   def targetFolderInfix = downloadSnapshot ? "SNAPSHOTS" : "RELEASES"
+   //def targetFolder = "${artifactId}/${targetFolderInfix}/${version}/"
+   def targetFolder = "${artifactId}/${version}/"
+   return targetFolder
+}
+
+def prepareSearchPattern(String artifactId, String version , boolean downloadSnapshot) {
+   version = !downloadSnapshot && version.contains("SNAPSHOT") ? version.replace("-SNAPSHOT" , "") : version
+   def repositoryName = downloadSnapshot ? "cetera-maven-snapshots" : "cetera-maven-releases"
+   def pattern = "${repositoryName}/com/example/${artifactId}/${version}/${artifactId}-*.war"
+   return pattern
 }
