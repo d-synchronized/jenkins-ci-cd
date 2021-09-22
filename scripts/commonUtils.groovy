@@ -24,6 +24,7 @@ def downloadArtifacts(String pattern, String target){
    buildInfo = server.download spec: downloadSpec, failNoOp: true
    server.publishBuildInfo buildInfo
   }catch(err){
+    echo "Error occurred while running the job' , $err"
     buildInfo = null
   }
   return buildInfo                 
