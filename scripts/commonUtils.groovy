@@ -66,4 +66,5 @@ def prepareSearchPattern(String artifactId, String version , boolean downloadSna
 }
 
 
+
 return this
