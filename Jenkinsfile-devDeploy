@@ -12,13 +12,7 @@ node () { //node('worker_node')
    def artifactId = 'common-services'
    try {
      stage ('Artifactory Configuration') {
-       // Obtain an Artifactory server instance, defined in Jenkins --> Manage Jenkins --> Configure System:
        server = Artifactory.server 'DSYNC_JFROG_INSTANCE'
-       // Tool name from Jenkins configuration
-       rtMaven.tool = 'MAVEN_BUILD_TOOL'
-       rtMaven.deployer releaseRepo: 'cetera-maven-releases', snapshotRepo: 'cetera-maven-snapshots', server: server
-       //rtMaven.resolver releaseRepo: 'cetera-maven-virtual-releases', snapshotRepo: 'cetera-maven-virtual-snapshots', server: server
-       buildInfo = Artifactory.newBuildInfo()
      }
       
      stage('Download Artifact') {
