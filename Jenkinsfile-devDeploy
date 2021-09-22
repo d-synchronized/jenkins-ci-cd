@@ -2,8 +2,8 @@
 node () { //node('worker_node')
    properties([
       parameters([
-           string(defaultValue: 'http://localhost:8082/', name: 'SERVER', trim: true),
            string(defaultValue: '', name: 'VERSION', trim: true, description: 'If VERSION is specified, artifact will be downloaded from Repository'),
+           string(defaultValue: 'http://localhost:8082/', name: 'SERVER', trim: true),
       ]),
       disableConcurrentBuilds()
    ])
