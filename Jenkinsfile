@@ -191,13 +191,31 @@ node () { //node('worker_node')
          }
             
          if (userInput == true) {
-           echo "**Building artifact ${pom.artifactId} against version ${pom.version}**"
            uploadArtifact = commonUtils.buildAndPublish("${pom.artifactId}" , "${pom.version}", rtMaven , buildInfo, server)
-           echo "**Successfully Build artifact ${pom.artifactId} against version ${pom.version}**"
          }
-          //build job: 'RunArtInTest', parameters: [[$class: 'StringParameterValue', name: 'systemname', value: systemname]]
+         //build job: 'RunArtInTest', parameters: [[$class: 'StringParameterValue', name: 'systemname', value: systemname]]
        } else{
          uploadArtifact = commonUtils.buildAndPublish("${pom.artifactId}" , "${pom.version}", rtMaven, buildInfo, server)
+       }
+     }
+     
+     stage('Deploy'){
+       DEPLOY_TO_QA = "${params.Env}" == 'QA' ? true : false
+       DEPLOY_TO_DEV = "${params.Env}"  == 'DEV' ? true : false
+       DEPLOY_TO_UAT = "${params.Env}"  == 'UAT' ? true : false
+       
+       def environmentValue = "${params.Env}"
+       switch(environmentValue){
+         case "DEV":
+          build job: 'cboss-common-services-devDeploy', parameters: [[$class: 'StringParameterValue', name: 'version', value: "${pom.version}"]]
+          break
+         case "QA":
+          build job: 'cboss-common-services-qaDeploy', parameters: [[$class: 'StringParameterValue', name: 'version', value: "${pom.version}"]]
+          break
+         case "UAT":
+          build job: 'cboss-common-services-devDeploy', parameters: [[$class: 'StringParameterValue', name: 'version', value: "${pom.version}"]]
+          build job: 'cboss-common-services-qaDeploy', parameters: [[$class: 'StringParameterValue', name: 'version', value: "${pom.version}"]]
+          break
        }
      }
      
