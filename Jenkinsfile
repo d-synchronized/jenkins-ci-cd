@@ -196,7 +196,7 @@ node () { //node('worker_node')
      }
      
    } catch(Exception exception){
-     echo "Error occurred while running the job '${env.JOB_NAME}' , $err"
+     echo "Error occurred while running the job '${env.JOB_NAME}' , $exception"
      currentBuild.result = 'FALIURE'
    }
    
