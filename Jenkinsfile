@@ -172,26 +172,26 @@ node () { //node('worker_node')
                                              ]
                                            ]
                                )
-          }
-        }catch(err) {
-          def user = err.getCauses()[0].getUser()
-          if('SYSTEM' == user.toString()) { // SYSTEM means timeout.
-            echo "**Artifact already exists!, No response received from the user for Re - Build"
-            userInput = false
-          } else {
-            echo "**Artifact already exists!, Re - Build request aborted by the user"
-            userInput = false
-          }
-       }
+            }
+          }catch(err) {
+            def user = err.getCauses()[0].getUser()
+            if('SYSTEM' == user.toString()) { // SYSTEM means timeout.
+              echo "**Artifact already exists!, No response received from the user for Re - Build"
+              userInput = false
+            } else {
+              echo "**Artifact already exists!, Re - Build request aborted by the user"
+              userInput = false
+            }
+         }
             
-       if (userInput == true) {
-         echo "**Building artifact ${pom.artifactId} against version ${pom.version}**"
-         uploadArtifact = buildAndPublish("${pom.artifactId}" , "${pom.version}")
-         echo "**Successfully Build artifact ${pom.artifactId} against version ${pom.version}**"
-       }
+         if (userInput == true) {
+           echo "**Building artifact ${pom.artifactId} against version ${pom.version}**"
+           uploadArtifact = buildAndPublish("${pom.artifactId}" , "${pom.version}", rtMaven)
+           echo "**Successfully Build artifact ${pom.artifactId} against version ${pom.version}**"
+         }
           //build job: 'RunArtInTest', parameters: [[$class: 'StringParameterValue', name: 'systemname', value: systemname]]
        } else{
-         uploadArtifact = buildAndPublish("${pom.artifactId}" , "${pom.version}")
+         uploadArtifact = buildAndPublish("${pom.artifactId}" , "${pom.version}", rtMaven)
        }
      }
      
@@ -202,7 +202,7 @@ node () { //node('worker_node')
    
 }
 
-def buildAndPublish(String artifactId, String version){
+def buildAndPublish(String artifactId, String version, Object rtMaven){
   echo "**Building artifact ${artifactId} against version ${version}**"
   rtMaven.run pom: 'pom.xml', goals: 'clean install', buildInfo: buildInfo
   server.publishBuildInfo buildInfo
