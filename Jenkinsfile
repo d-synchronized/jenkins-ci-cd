@@ -64,6 +64,11 @@ node () { //node('worker_node')
    def repoUrl = 'https://github.com/d-synchronized/common-services.git'
    def pom
    def commonUtils
+   
+   def server
+   def rtMaven = Artifactory.newMavenBuild()
+   def buildInfo
+   
    try{
      stage ('Clone') { 
        echo "***Checking out source code from repo url ${repoUrl},branchName ${params.BRANCH}***"
@@ -191,7 +196,8 @@ node () { //node('worker_node')
      }
      
    } catch(Exception exception){
-     //
+     echo "Error occurred while running the job '${env.JOB_NAME}' , $err"
+     currentBuild.result = 'FALIURE'
    }
    
 }
