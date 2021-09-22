@@ -1,0 +1,53 @@
+//Groovy Pipeline
+node () { //node('worker_node')
+   properties([
+      parameters([
+           string(defaultValue: 'http://localhost:8082/', name: 'SERVER', trim: true),
+           string(defaultValue: '', name: 'VERSION', trim: true, description: 'If VERSION is specified, artifact will be downloaded from Repository'),
+      ]),
+      disableConcurrentBuilds()
+   ])
+   
+   def artifactId = 'common-services'
+   def IS_RELEASE = false
+   try {
+     stage ('Artifactory Configuration') {
+       // Obtain an Artifactory server instance, defined in Jenkins --> Manage Jenkins --> Configure System:
+       server = Artifactory.server 'DSYNC_JFROG_INSTANCE'
+       // Tool name from Jenkins configuration
+       rtMaven.tool = 'MAVEN_BUILD_TOOL'
+       rtMaven.deployer releaseRepo: 'cetera-maven-releases', snapshotRepo: 'cetera-maven-snapshots', server: server
+       //rtMaven.resolver releaseRepo: 'cetera-maven-virtual-releases', snapshotRepo: 'cetera-maven-virtual-snapshots', server: server
+       buildInfo = Artifactory.newBuildInfo()
+     }
+      
+     stage('Download Artifact') {
+       echo "DEV DEPLOY : Downloading Artifact ${artifactId} with Version ${VERSION} not found"
+       ARTIFACT_ALREADY_PRESENT = commonUtils.checkIfArtifactAlreadyExistInRepo("${artifactId}" ,
+                                                                                "${VERSION}" , 
+                                                                                 IS_RELEASE ? false : true,
+                                                                                 server)
+       if(ARTIFACT_ALREADY_PRESENT){
+         echo "DEV DEPLOY : Successfully downloaded Artifact ${artifactId} with Version ${VERSION}"
+       } else {
+         echo "Artifact ${artifactId} with Version ${VERSION} not found"
+       }                                                                         
+     }//Download Artifact ends here
+      
+     
+     stage('Publish To Application/Web Server') {
+       echo "DEV DEPLOY: Deploying to default tomcat server"
+     }//Publish To Application/Web Server stage ends here
+     currentBuild.result = 'SUCCESS'
+   } catch(Exception err) {
+      echo "Error occurred while running the job '${env.JOB_NAME}' , $err"
+      currentBuild.result = 'FALIURE'
+      //revertParentPOM("${previousPomVersion}")
+      if("${params.RELEASE}" == 'true'){
+         deleteTag("${tagVersionCreated}")
+      }
+   } finally {
+       //deleteDir()
+   }
+   
+}
