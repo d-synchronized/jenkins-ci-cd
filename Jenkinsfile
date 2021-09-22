@@ -202,7 +202,7 @@ node () { //node('worker_node')
    
 }
 
-def buildAndPublish(String artifactId, String version, Object rtMaven){
+def buildAndPublish(String artifactId, String version, Object rtMaven, Object buildInfo){
   echo "**Building artifact ${artifactId} against version ${version}**"
   rtMaven.run pom: 'pom.xml', goals: 'clean install', buildInfo: buildInfo
   server.publishBuildInfo buildInfo
