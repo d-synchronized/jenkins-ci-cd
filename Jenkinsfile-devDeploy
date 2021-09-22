@@ -23,7 +23,7 @@ node () { //node('worker_node')
       
      stage('Download Artifact') {
        echo "DEV DEPLOY : Downloading Artifact ${artifactId} with Version ${VERSION} not found"
-       ARTIFACT_ALREADY_PRESENT = commonUtils.checkIfArtifactAlreadyExistInRepo("${artifactId}" ,
+       ARTIFACT_ALREADY_PRESENT = checkIfArtifactAlreadyExistInRepo("${artifactId}" ,
                                                                                 "${params.VERSION}" , 
                                                                                  IS_RELEASE ? false : true,
                                                                                  server)
