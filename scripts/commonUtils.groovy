@@ -4,7 +4,15 @@ def fetchAvailableBranches() {
     return ['development', 'master']
 }
 
-def downloadArtifacts(String pattern, String target){
+def buildAndPublish(String artifactId, String version, Object rtMaven, Object buildInfo, Object server){
+  echo "**Building artifact ${artifactId} against version ${version}**"
+  rtMaven.run pom: 'pom.xml', goals: 'clean install', buildInfo: buildInfo
+  server.publishBuildInfo buildInfo
+  echo "**Successfully Build artifact ${artifactId} against version ${version}**"
+  return true
+}
+
+def downloadArtifacts(String pattern, String target , Object server){
   echo "Downloading artifact against pattern ${pattern}  ,Target folder ${target}"
   def downloadSpec = """{
                           "files": [
