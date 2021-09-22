@@ -186,12 +186,12 @@ node () { //node('worker_node')
             
        if (userInput == true) {
          echo "**Building artifact ${pom.artifactId} against version ${pom.version}**"
-         uploadArtifact = buildAndPublish()
+         uploadArtifact = buildAndPublish("${pom.artifactId}" , "${pom.version}")
          echo "**Successfully Build artifact ${pom.artifactId} against version ${pom.version}**"
        }
           //build job: 'RunArtInTest', parameters: [[$class: 'StringParameterValue', name: 'systemname', value: systemname]]
        } else{
-         uploadArtifact = buildAndPublish()
+         uploadArtifact = buildAndPublish("${pom.artifactId}" , "${pom.version}")
        }
      }
      
@@ -202,10 +202,10 @@ node () { //node('worker_node')
    
 }
 
-def buildAndPublish(){
-  echo "**Building artifact ${pom.artifactId} against version ${pom.version}**"
+def buildAndPublish(String artifactId, String version){
+  echo "**Building artifact ${artifactId} against version ${version}**"
   rtMaven.run pom: 'pom.xml', goals: 'clean install', buildInfo: buildInfo
   server.publishBuildInfo buildInfo
-  echo "**Successfully Build artifact ${pom.artifactId} against version ${pom.version}**"
+  echo "**Successfully Build artifact ${artifactId} against version ${version}**"
   return true
 }
