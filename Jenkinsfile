@@ -100,7 +100,10 @@ node () { //node('worker_node')
      stage ('Create TAG') {
        IS_RELEASE = "${params.release}" == 'Yes' ? true : false
        if(IS_RELEASE){
-         ARTIFACT_ALREADY_PRESENT = commonUtils.checkIfArtifactAlreadyExistInRepo("${pom.artifactId}" , "${pom.version}" , false)
+         ARTIFACT_ALREADY_PRESENT = commonUtils.checkIfArtifactAlreadyExistInRepo("${pom.artifactId}" ,
+                                                                                 "${pom.version}" , 
+                                                                                  IS_RELEASE ? false : true,
+                                                                                  server)
          if(ARTIFACT_ALREADY_PRESENT){
             echo "**RELEASE : Create TAG stage will be skipped, Reason - Release artifact with version ${pom.version} already available in JFROG!**"
          }//if ends here 
